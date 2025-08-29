@@ -27,11 +27,12 @@ jobs:
              html_parser_test:latest \
              pytest -v html_parser/tests/test_html_parser.py
 
-      
+
       - name: Upload failed reconstructions
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: failed_html
           path: html_parser/tests/failed_reconstructed/
+
 
