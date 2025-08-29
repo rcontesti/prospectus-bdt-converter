@@ -1,0 +1,37 @@
+name: HTML Parser Tests
+
+# When to run the workflow
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out your repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Build the Docker image
+      - name: Build Docker image
+        run: docker build -t html_parser_test:latest ./html_parser
+
+      # Step 3: Run tests inside the container
+      - name: Run tests
+        run: docker run --rm \
+             -v ${{ github.workspace }}/html_parser/tests/data:/app/html_parser/tests/data \
+             html_parser_test:latest \
+             pytest -v html_parser/tests/test_html_parser.py
+
+      
+      - name: Upload failed reconstructions
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: failed_html
+          path: html_parser/tests/failed_reconstructed/
+

@@ -1,0 +1,6 @@
+# Ignore content of subfolders in the data directory
+data/HTML/*
+data/PDF/*
+.DS_Store
+notebooks/*
+html_parser/tests/failed_reconstructed/

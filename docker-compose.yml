@@ -1,0 +1,17 @@
+services:
+  html_parser:
+    container_name: html_parser
+    build: 
+      context: ./html_parser
+      dockerfile: Dockerfile
+    image: prospectus-bdt-converters/html_parser:v0.1
+    volumes:
+      - ./data/HTML:/app/data/HTML
+      - ./html_parser/tests/data:/app/html_parser/tests/data
+      - ./html_parser/tests/failed_reconstructed:/app/html_parser/tests/failed_reconstructed
+    command: pytest -v
+    # Command to run tests, can be overridden
+    # command: ls -R /app/data/HTML /app/html_parser/tests/data
+    # command: pytest tests/test_html_parser.py
+    # If you want to run the splitter directly, you can use:
+    # command: python src/html_regex_page_splitter.py
