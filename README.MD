@@ -1,10 +1,7 @@
-
-
-
-
-Main objective: Be able to process a debt prospectus both in html or pdf format with a small LLM and be able to generate a Bond Debt Taxonomy Document.
-
 ## Table of Contents
+- [Context](#context)
+  - [Project Objective](#project-objective)
+  - [Fixed Income Tokenization Standards](#fixed-income-tokenization-standards)
 - [Prospectus Sources and file formats:](#prospectus-sources-and-file-formats)
 - [Main Blocks](#main-blocks)
 - [Small LLM](#small-llm)
@@ -19,11 +16,40 @@ Main objective: Be able to process a debt prospectus both in html or pdf format 
   - [Example 4](#example-4)
 - [Resources](#resources)
 
+# Context
+
+Debt capital markets are rapidly digitalizing, with many providers targeting specific steps of the issuance process. Increasingly, platforms are exploring distributed ledger technology (DLT) for primary issuance and settlement. While this innovation is promising, the lack of end-to-end solutions creates fragmentation across systems and infrastructures.
+
+To counter this challenge, the **Bond Data Taxonomy (BDT)** was introduced in 2023. The BDT establishes a shared, machine-readable vocabulary that captures the essential details of a bond. It covers financial terms such as principal, currency, coupon, and maturity; important dates like pricing and settlement; as well as contextual information including governing law, participants, ratings, and selling restrictions. Where possible, it draws on existing ISO standards to ensure compatibility across platforms.
+
+The taxonomy is deliberately neutral with respect to vendors and technologies, designed for use in both conventional debt issuance and DLT-based instruments. Its purpose is threefold:
+- Enable **automation and straight-through processing** across issuance, trading, settlement, and distribution  
+- Allow **interoperability** across diverse platforms and systems  
+- Provide a **common foundation** for future services and digital innovations  
+
+---
+
+## Project Objective
+
+This repository aims to **transform bond prospectuses, either in html or pdf, into structured XML that conforms to the Bond Data Taxonomy (BDT)**. Converting legal documents into a standardized data format makes it easier to:  
+
+- Extract and reuse economic and legal terms of securities  
+- Facilitate integration between traditional infrastructures and emerging digital platforms  
+- Reduce operational inefficiencies and mitigate the risk of fragmentation  
+
+## Fixed Income Tokenization Standards
+
+- BDT = “What is this bond?” (static facts, prospectus).
+- CDM = “What happened to it?” (events, lifecycle).
+- CMTAT = “How is it represented on-chain?” (token logic + compliance).
+
+To this end, BDT provides a common language for key bond information typically contained in a bond term sheet in a (a) standardised and (b) machine-readable (XML) format. The BDT defines unambiguously the data elements of a debt security and DLT platform information that may be communicated between different parties in a transaction (e.g. via APIs, smart contracts, or spreadsheets).
+
 
 # Prospectus Sources and file formats:
 
-- SEC EDGAR: htm/html/mhtml
-- Luxembourg Stock Exchange: PDF
+- [SEC EDGAR](https://www.sec.gov/search-filings): htm/html/mhtml
+- [Luxembourg Stock Exchange](luxse.com): PDF
 - [Singapore Stock Exchange](https://www.sgx.com/securities/prospectus-circulars-offer-documents): PDF
 
 # Main Blocks
@@ -32,6 +58,7 @@ Main objective: Be able to process a debt prospectus both in html or pdf format 
 - pdf parsing library
 - small LLM
 - posgresql database
+- FerretDB:=Open Source MongoDB alternative, built on Postgres. 
 - Orchestator
 
 
@@ -168,5 +195,5 @@ Only one table of contents with "toc" as anchor
 ```
 
 # Resources
-
+- [Bond Data Taxonomy](https://www.icmagroup.org/fintech-and-digitalisation/fintech-advisory-committee-and-related-groups/bond-data-taxonomy/)
 - [Docker Compose with Docker AI](https://docs.docker.com/ai/compose/models-and-compose/)
