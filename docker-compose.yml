@@ -15,3 +15,10 @@ services:
     # command: pytest tests/test_html_parser.py
     # If you want to run the splitter directly, you can use:
     # command: python src/html_regex_page_splitter.py
+    models:
+      - llm
+
+
+models:
+  llm:
+    model: ai/smollm3
