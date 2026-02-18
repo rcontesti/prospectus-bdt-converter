@@ -25,7 +25,7 @@ Build and validate Stages 2–6 as a CLI tool before adding any API scaffolding.
 | 2 | PDF parsing → structured text (pymupdf MVP, docling future) | No | Tested |
 | 3 | Section Finding — heading detection | No | Tested |
 | 4 | Summary Table Detection — find compact key terms block | No | Tested |
-| 5 | BDT Field Extraction — Bond Anchor → Grouped LLM → Post-processor | Yes | Not started |
+| 5 | BDT Field Extraction — Bond Anchor → Grouped LLM → Post-processor | Yes | Implemented + Tested |
 | 6 | XML Assembly + XSD Validation (lxml) | No | Not started |
 
 **Stage 3 — heading detection (not TOC):**
