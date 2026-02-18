@@ -1,0 +1,22 @@
+[project]
+name = "prospectus-bdt-converter"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "requires_pdf: test needs PDF fixtures in data/PDF/",
+    "requires_ollama: test needs running Ollama instance",
+    "requires_network: test needs external network access (GLEIF API)",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 99
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pipeline", "bdt"]

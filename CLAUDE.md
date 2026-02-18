@@ -22,9 +22,9 @@ Build and validate Stages 2–6 as a CLI tool before adding any API scaffolding.
 | Stage | Name | LLM | Status |
 |-------|------|-----|--------|
 | 1 | API + file-based job queue (FastAPI) — **deferred to Phase 2** | No | Not started |
-| 2 | PDF parsing → structured text (pymupdf MVP, docling future) | No | Not started |
-| 3 | Section Finding — heading detection | No | Not started |
-| 4 | Summary Table Detection — find compact key terms block | No | Not started |
+| 2 | PDF parsing → structured text (pymupdf MVP, docling future) | No | Tested |
+| 3 | Section Finding — heading detection | No | Tested |
+| 4 | Summary Table Detection — find compact key terms block | No | Tested |
 | 5 | BDT Field Extraction — Bond Anchor → Grouped LLM → Post-processor | Yes | Not started |
 | 6 | XML Assembly + XSD Validation (lxml) | No | Not started |
 
@@ -196,6 +196,16 @@ DELETE /jobs/{id}  → cancel/cleanup
 
 MVP queue: file-based (watched directory). Future: Redis.
 
+## Development Environment
+
+**Virtual environment:** `.venv/` (Python 3.11, created via `python3.11 -m venv .venv`). Activate with `source .venv/bin/activate` or invoke directly via `.venv/bin/python`.
+
+**Install dependencies:** `.venv/bin/pip install -r requirements.txt`
+
+**Run tests:** `.venv/bin/python -m pytest tests/ -v`
+
+**Run linter:** `.venv/bin/ruff check --fix . && .venv/bin/ruff format .`
+
 ## Key Directories & Files
 
 - `.docs/ICMA-Bond-Data-Taxonomy-v1.2-2024-02-02/` — BDT XSD, example XMLs, user guide
@@ -205,6 +215,66 @@ MVP queue: file-based (watched directory). Future: Redis.
 - `data/jobs/` — file-based job queue (git-ignored, Phase 2 only)
 - `docker-compose.yml` — stub, ready for API/worker/LLM services
 - `.github/workflows/test.yml` — CI stub, tests added per service
+
+## Coding Standards
+
+**Python version:** 3.11+
+
+**Type hints:** Required on all public functions and dataclass fields. Use `from __future__ import annotations` at top of every module for modern `X | Y` syntax.
+
+**Formatter/linter:** `ruff` (replaces black + isort + flake8 in one tool).
+- Line length: 99
+- Target: `py311`
+- Rules: `E`, `F`, `W`, `I` (isort), `UP` (pyupgrade), `B` (bugbear), `SIM` (simplify)
+- Format: ruff format (black-compatible)
+- Run: `ruff check --fix . && ruff format .`
+
+**Docstrings:** Google-style. Required for modules and public functions. Private helpers only need docstrings when logic is non-obvious.
+
+**Naming:**
+- `snake_case` for functions, variables, module files
+- `PascalCase` for classes and dataclasses
+- `UPPER_SNAKE` for module-level constants
+- Pipeline modules: `stage{N}_{name}.py` (e.g., `stage5a_anchor.py`)
+- Test modules: `test_stage{N}_{name}.py`
+
+**Imports order** (enforced by ruff `I`): stdlib, blank line, third-party, blank line, local. `from __future__ import annotations` always first.
+
+**Error handling:** Raise specific exceptions (`FileNotFoundError`, `ValueError`, `RuntimeError`). Never bare `except:`. Define `pipeline/errors.py` for custom pipeline exceptions if needed.
+
+**Data structures:** Use `@dataclass` for stage inputs/outputs. Keep dataclasses immutable where possible (`frozen=True` for value objects).
+
+## Testing Standards
+
+**Framework:** pytest (already in requirements)
+
+**Organization:**
+- One test file per pipeline module: `test_stage2_parse.py`, `test_stage3_find.py`, etc.
+- Class-based grouping: `TestParse{Fixture}`, `TestFind{Fixture}`, etc.
+- `conftest.py` for shared fixtures and skip markers
+
+**Fixtures (pytest):**
+- Session-scoped for expensive operations (PDF parsing, section finding)
+- Function-scoped for cheap/isolated operations
+- Module-level `_doc_cache` dict for parametrized cross-fixture tests
+
+**Skip markers for external dependencies:**
+- `requires_pdf` — skip if PDF fixtures not present (git-ignored, CI-safe)
+- `requires_ollama` — skip if Ollama not running at localhost:11434
+- `requires_network` — skip if external APIs (GLEIF) unreachable
+
+**Parametrize:** Use `@pytest.mark.parametrize` with `pytest.param(..., id="name")` for readability.
+
+**Naming:** `test_{what}_{scenario}` for methods, `Test{Feature}` for classes.
+
+**Assertions:** One logical assertion per test. Use descriptive messages on non-obvious assertions: `assert len(sections) >= 1, "GeoPark should have at least one bond section"`.
+
+**Coverage:** `pytest-cov` with target 90%+ on deterministic code (stages 2-4, 5a, 5c, 6). LLM integration tests (5b) are optional/skipped in CI.
+
+**Running tests:**
+- All tests: `pytest tests/ -v`
+- Skip external deps: `pytest tests/ -v -m "not requires_ollama and not requires_network"`
+- Single stage: `pytest tests/test_stage2_parse.py -v`
 
 ## Future Steps (deferred from MVP)
 
