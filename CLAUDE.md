@@ -4,36 +4,77 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A pipeline that converts bond prospectus / indenture PDFs into **ICMA BDT v1.2 XML** files. Runs as a Docker async API service (batch PDFs in → batch XMLs out).
+A pipeline that converts bond prospectus / indenture PDFs into **ICMA BDT v1.2 XML** files. Built CLI-first; runs as a Docker async API service in Phase 2 (batch PDFs in → batch XMLs out).
 
 **Hard constraints:** open-source only, model-agnostic locally-runnable LLM, self-contained Docker.
+
+## Build Order
+
+```
+Phase 1 (MVP):  python convert.py <input.pdf> --output <dir>/
+Phase 2:        FastAPI wrapper around the same pipeline
+```
+
+Build and validate Stages 2–6 as a CLI tool before adding any API scaffolding.
 
 ## Pipeline (6 stages)
 
 | Stage | Name | LLM | Status |
 |-------|------|-----|--------|
-| 1 | API + file-based job queue (FastAPI) | No | Not started |
-| 2 | PDF parsing → structured JSON (pymupdf MVP, docling future) | No | Not started |
-| 3 | TOC extraction + document segmentation | No | Not started |
-| 4 | Target section ID ("Description of the Notes" etc.) | Fallback | Not started |
-| 5 | BDT field extraction — grouped prompts | Yes | Not started |
-| 6 | XML assembly + XSD validation (lxml) | No | Not started |
+| 1 | API + file-based job queue (FastAPI) — **deferred to Phase 2** | No | Not started |
+| 2 | PDF parsing → structured text (pymupdf MVP, docling future) | No | Not started |
+| 3 | Section Finding — heading detection | No | Not started |
+| 4 | Summary Table Detection — find compact key terms block | No | Not started |
+| 5 | BDT Field Extraction — Bond Anchor → Grouped LLM → Post-processor | Yes | Not started |
+| 6 | XML Assembly + XSD Validation (lxml) | No | Not started |
 
-**Stage 4:** return ALL matching sections, not just the first — a prospectus may describe multiple bonds. Output: list of `(section_title, page_start, page_end)` per bond. Section titles to match (fuzzy): "Description of the Notes", "Description of the Bonds", "Terms and Conditions of the Notes", "Terms and Conditions", "Description of the Securities"
+**Stage 3 — heading detection (not TOC):**
+- Scan extracted text for short, isolated lines that fuzzy-match target patterns
+- Target: "Description of the Notes", "Description of the Bonds", "Terms and Conditions of the Notes", "Terms and Conditions", "Description of the Securities", "Description of the New Securities"
+- Take text from each match to the next major heading — that is one bond section
+- Return ALL matches — every matched section is a separate bond candidate
+- Output: ordered list of `(section_title, text)` tuples, one per bond found
+- Why not TOC: TOC page numbers use internal pagination (S-1, S-2...) that doesn't match PDF page index → off-by-N errors
 
-**Stage 5:** run once per bond section from Stage 4. ISIN is the primary bond identifier — output files are named `{ISIN}.xml`. If no ISIN is found, generate a temp ID and flag for review.
+**Stage 4 — summary table detection:**
+- Within each bond section, scan the first 15% of the text for a compact table-like block (consistent line structure, keywords: "Maturity Date", "Interest Rate", "ISIN", "Aggregate Principal Amount")
+- Extract this block as the **primary LLM input** for Stage 5. Use full section text only as fallback.
+- Why: a 2-page key terms table is far more reliable LLM input than 40 pages of legal prose
 
-**Stage 6:** one BDT XML per bond. If N > 1 bonds found in a PDF, job result is a ZIP of N XMLs.
+**Stage 5 — three sequential sub-steps:**
 
-**Stage 5 extraction groups** (each sent as a separate LLM prompt with structured JSON output schema):
+**5a — Bond Anchor** (run first, before any BDT field extraction):
+```json
+{ "bond_name": "...", "isins": ["XS...", "US..."] }
+```
+Returned ISINs are embedded in all subsequent prompts: *"Extract the following fields for the bond with ISIN XS2385150334. Ignore all other bonds or ISINs mentioned in the text."* This resolves the many-ISIN ambiguity.
+
+**5b — Grouped LLM extraction** (one prompt per group, JSON mode enforced):
 - Identifiers: ISIN, CUSIP, Common Code, SEDOL
 - Amounts: AggregateNominalAmount, SpecifiedDenomination, IntegralMultiples, SpecifiedCurrency
 - Dates: PricingDate, IssueDate, SettlementDate, MaturityDate, InterestCommencementDate
-- Interest: InterestType, InterestRate, InterestPaymentFrequency, DayCountFraction, BusinessDayConvention, BusinessDayCenter
-- Parties: Issuer, lead managers, trustee, paying agent, fiscal agent (name + LEI; LEI to be looked up via GLEIF in future)
-- Issuance: IssuanceType, IssuePrice, FormOfNote, StatusOfNote, GoverningLaw
-- Restrictions: SellingRestrictions, PRIIPsRestriction, ManufacturerTargetMarket
-- Amortization: stepDate + stepValue pairs (if amortizing — check RedemptionPaymentBasis)
+- Interest: InterestType, InterestRate, InterestPaymentFrequency, DayCountFraction, BusinessDayConvention, BusinessDayCenter — **enum values listed inline in prompt**
+- Issuance: IssuanceType, IssuePrice, FormOfNote, StatusOfNote, GoverningLaw — **enum values listed inline in prompt**
+- Parties: Issuer, lead managers, trustee, paying agent, fiscal agent (names only — LEI resolved in 5c)
+- Selling restrictions: SellingRestrictions, PRIIPsRestriction — **enum values listed inline in prompt**
+- Amortization: stepDate + stepValue pairs (only if bond is amortizing)
+- `ManufacturerTargetMarket` is **not sent to LLM** — set by rule in 5c
+
+**5c — Deterministic post-processing** (normalization only, no interpretation):
+| Input | Action |
+|-------|--------|
+| Date strings | `dateutil` → ISO 8601 (`2030-01-09`) |
+| Amount strings | Strip symbols → float (`500000000.0`) |
+| ISIN strings | Validate 12-char format + ISO 6166 checksum |
+| Enum value not in allowed list | Null + flag for review |
+| Party names | GLEIF API → resolve LEI. On miss: placeholder + flag |
+| `ManufacturerTargetMarket` | If SellingRestrictions contains `144A` or `REGS_CAT2` but no EU/UK MiFID → `NOT_APPLICABLE` |
+| Any required field = null | Mark bond as `done_partial` |
+
+**Stage 6 — output modes:**
+- `done_valid` — all required fields extracted, XSD-valid
+- `done_partial` — one or more required fields missing; output returned with `<ValidationWarnings>` block; never fails entirely due to missing fields
+- N > 1 bonds in a PDF → result is a ZIP of N XMLs named by primary ISIN
 
 ## BDT Schema — Critical Constraints for Extraction
 
@@ -47,7 +88,7 @@ XSD files: `.docs/ICMA-Bond-Data-Taxonomy-v1.2-2024-02-02/`
 - InterestPayment requires: `InterestType`, `InterestCommencementDate`, `InterestPayments`
 - InterestPayments requires: `InterestPaymentFrequency`, `PayableDate` (1..4 with Day+Month), `FirstPayment` (with PaymentDate)
 
-**Enum constraints the LLM must output exactly** (these are strictly validated by XSD):
+**Enum constraints the LLM must output exactly** (strictly validated by XSD):
 - `IssuanceType`: PROGRAMME | STANDALONE
 - `InterestType`: FIXED | FLOATING | ZERO_COUPON | INDEX_LINKED_INTEREST
 - `InterestPaymentFrequency`: ANNUALLY | SEMIANNUALLY | QUARTERLY | NONE
@@ -69,7 +110,8 @@ XSD files: `.docs/ICMA-Bond-Data-Taxonomy-v1.2-2024-02-02/`
 
 | Gap | Workaround |
 |-----|-----------|
-| No amortization schedule | Use `RedemptionPaymentBasis=INSTALLMENT` + custom `<AmortizationSchedule>` extension |
+| No amortization schedule | Use `RedemptionPaymentBasis=INSTALLMENT` + custom `<AmortizationSchedule>` extension v1.0 |
+| No step-up / step-down coupon schedule | Custom `<StepCouponSchedule>` extension (planned v1.0) |
 | `BusinessDayCenter` missing Buenos Aires, Tokyo, etc. | Use `NEW_YORK` for USD bonds |
 | `GoverningLaw` missing Argentinian, Singapore law | Use `NEW_YORK_LAW` for international tranche |
 | `ClearingSettlementSystem` missing Caja de Valores, CDP | Use `DTCC` for 144A tranche |
@@ -77,10 +119,28 @@ XSD files: `.docs/ICMA-Bond-Data-Taxonomy-v1.2-2024-02-02/`
 
 ## Extension Framework
 
-Extensions use versioned namespaces: `urn:bdt-ext:{name}:v{major}`. Every XML that uses extensions declares them in an `<ExtensionManifest xmlns="urn:bdt-ext:manifest:v1">` block immediately after `</ICMABondDataTaxonomy>`. Extensions live inside standard BDT elements using their own namespace — the core BDT remains XSD-valid.
+Namespace pattern: `urn:bdt-ext:{name}:v{major}`. Two levels of placement:
 
-**Amortization extension v1.0** (`urn:bdt-ext:amortization:v1`): when `RedemptionPaymentBasisType = INSTALLMENT`, append inside `<Product>`. Each `<step>` = outstanding notional *after* payment on `stepDate`:
+1. `<ext:ExtensionManifest>` lives at the outer `<BDTDocument>` wrapper level, **sibling of `<bdt:Document>`** — the ICMA XSD sees only a valid `<bdt:Document>` child
+2. Extension data elements live inside relevant BDT elements using their own namespace
 
+**Output document structure:**
+```xml
+<BDTDocument xmlns:bdt="urn:icma:xsd:ICMABondDataTaxonomy"
+             xmlns:ext="urn:bdt-ext:manifest:v1">
+  <bdt:Document>
+    <bdt:ICMABondDataTaxonomy>
+      <!-- standard BDT — independently XSD-valid -->
+    </bdt:ICMABondDataTaxonomy>
+  </bdt:Document>
+  <ext:ExtensionManifest>
+    <ext:Extension name="amortization" version="1.0" namespace="urn:bdt-ext:amortization:v1"/>
+    <ext:Extension name="step-coupon" version="1.0" namespace="urn:bdt-ext:step-coupon:v1"/>
+  </ext:ExtensionManifest>
+</BDTDocument>
+```
+
+**Amortization extension v1.0** (`urn:bdt-ext:amortization:v1`): when `RedemptionPaymentBasisType = INSTALLMENT`, append inside `<Product>`. Each `<step>` = outstanding notional *after* payment on `stepDate`. FpML `notionalStepSchedule` is the design reference:
 ```xml
 <AmortizationSchedule xmlns="urn:bdt-ext:amortization:v1">
   <step><stepDate>2026-08-21</stepDate><stepValue currency="USD">1000000</stepValue></step>
@@ -88,13 +148,21 @@ Extensions use versioned namespaces: `urn:bdt-ext:{name}:v{major}`. Every XML th
 </AmortizationSchedule>
 ```
 
-FpML `notionalStepSchedule` is the design reference. ACTUS is noted for future algorithmic schedule derivation. Future extension candidates: floating rate reset schedule, step-up coupon schedule, linked bond cross-reference.
+**Step-up coupon extension v1.0** (`urn:bdt-ext:step-coupon:v1`): planned. Each `<step>` = rate in effect from `stepDate` forward:
+```xml
+<StepCouponSchedule xmlns="urn:bdt-ext:step-coupon:v1">
+  <step><stepDate>2024-08-21</stepDate><rate>0.0875</rate></step>
+  <step><stepDate>2026-08-21</stepDate><rate>0.1000</rate></step>
+</StepCouponSchedule>
+```
+
+ACTUS is noted for future algorithmic schedule derivation/validation.
 
 ## Dual-ISIN / Multi-Bond Logic
 
 **Dual-ISIN (same economic bond, two markets):** a 144A ISIN + Reg S ISIN represent one bond. Produce **one BDT XML** with both ISINs in `<SecurityIdentifierList>`, both clearing systems in `<ClearingSettlementSystem>`, both selling restrictions in `<SellingRestrictions>`. File named after Reg S ISIN for international bonds. If tranches have materially different terms (different amounts, different maturity), treat as separate bonds.
 
-**Multi-bond prospectus:** Stage 4 returns N section tuples → Stage 5 runs N times → Stage 6 produces N XMLs → API result is a ZIP.
+**Multi-bond prospectus:** Stage 3 returns N section tuples → Stage 5 runs N times → Stage 6 produces N XMLs → Phase 2 API result is a ZIP.
 
 ## Test Fixtures
 
@@ -106,27 +174,25 @@ Fixtures live in `data/PDF/` (git-ignored). Full details and feature coverage ma
 | `Prospectus - 2021.pdf` | Province of Buenos Aires | 6 series | Amortizing, step-up coupon, dual currency USD+EUR, dual ISIN, LuxSE |
 | `us_prospectus_and_prospectus_supplement.pdf` | Argentina (sovereign) | 4 types | GDP-linked, $81.8B 2005 restructuring |
 | `PDVSA_XS0294364103.pdf` | PDVSA (Venezuela) | 3 series | Guaranteed, LuxSE, no BDT GoverningLaw match |
-| `USG38327AB13_OC_EN_2.PDF` | GeoPark (Bermuda) | 1 (tap) | Single bond, tap issuance, simplest structure |
+| `USG38327AB13_OC_EN_2.PDF` | GeoPark (Bermuda) | 1 (tap) | **Simplest fixture** — single bond, fixed rate bullet, New York law |
 | `USL21779AD28_OC_EN_3.pdf` | CSN Resources (Luxembourg/Brazil) | 2 series | Guaranteed, tap, multi-bond |
 | `USP3710FAU86_OC_EN.PDF` | EDENOR (Argentina utility) | 1 | Amortizing 3 installments, dual ISIN |
 | `USP98047AC08_PR_EN.pdf` | Volcan (Peru mining) | 1 | Listing memorandum format, guaranteed |
 | `XS2278474924_OC_EN_2.pdf` | Liquid Telecom (England/Africa) | 1 | Senior secured, English law, 622 pages |
 
-**Simplest fixture to start with:** `USG38327AB13_OC_EN_2.PDF` (GeoPark) — single bond, fixed rate bullet, New York law, no amortization, 191 pages.
+**Start with:** `USG38327AB13_OC_EN_2.PDF` (GeoPark) — single bond, no amortization, 191 pages.
 
 When adding a new fixture: add a row above + a row to the README fixture table, add a pytest parametrize entry.
 
-## API Contract (async REST)
+## Phase 2 — API Contract (async REST, deferred)
 
 ```
 POST /jobs         → { job_id: "..." } per file
-GET  /jobs/{id}    → { status: "queued"|"processing"|"done"|"failed" }
-GET  /jobs/{id}/result  → BDT XML download
+GET  /jobs/{id}    → { status: "queued"|"processing"|"done_valid"|"done_partial"|"failed" }
+GET  /jobs/{id}/result  → BDT XML or ZIP download
 GET  /jobs/{id}/log     → extraction trace
 DELETE /jobs/{id}  → cancel/cleanup
 ```
-
-Job states: `queued` → `processing` → `done` / `failed`
 
 MVP queue: file-based (watched directory). Future: Redis.
 
@@ -136,17 +202,17 @@ MVP queue: file-based (watched directory). Future: Redis.
 - `.docs/amortization_standard.MD` — email to ICMA explaining FpML + ACTUS approach
 - `data/PDF/` — PDF test fixtures (git-ignored)
 - `data/output/` — output XMLs and ZIPs (git-ignored)
-- `data/jobs/` — file-based job queue (git-ignored, MVP only)
+- `data/jobs/` — file-based job queue (git-ignored, Phase 2 only)
 - `docker-compose.yml` — stub, ready for API/worker/LLM services
 - `.github/workflows/test.yml` — CI stub, tests added per service
 
 ## Future Steps (deferred from MVP)
 
 1. OCR support for scanned PDFs (`docling` / `easyocr`)
-2. Redis job queue
+2. Redis job queue (Phase 2)
 3. ACTUS integration for amortization schedule validation
-4. Multi-series prospectus support (one PDF → multiple BDTs)
-5. Automatic LEI resolution via GLEIF API
+4. Step-up coupon extraction — `StepCouponSchedule` extension (3 of 9 fixtures require it)
+5. Floating rate bond support
 6. Confidence scoring per extracted field
 7. Gradio UI front-end
 8. ICMA enum extension proposals (more business day centers, governing laws, clearing systems)
