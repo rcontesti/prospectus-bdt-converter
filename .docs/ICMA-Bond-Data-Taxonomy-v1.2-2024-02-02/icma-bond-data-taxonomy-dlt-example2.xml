@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 	This xml document was created by the International Capital Market Association (ICMA) Bond Data Taxonomy Working Group. 
+		This document is representative of the final terms of a security offering termsheet but does not represent an actual offering and is not inclusive of all fields required for the isssuance of a new security.-->
+<Document xmlns="urn:icma:xsd:ICMABondDataTaxonomy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:icma:xsd:ICMABondDataTaxonomy icma-bond-data-taxonomy.xsd">
+	<ICMABondDataTaxonomy>
+		<PartyRole>
+			<PartyRoleType>ISSUER</PartyRoleType>
+			<PartyID PID="LEI-5493006YXS1U5GIHE750"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>CENTRAL_ACCOUNT_KEEPER</PartyRoleType>
+			<PartyID PID="LEI-8IBZUGJ7JPLH368JE346"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>FISCAL_AGENT</PartyRoleType>
+			<PartyID PID="LEI-8IBZUGJ7JPLH368JE346"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>PAYING_AGENT</PartyRoleType>
+			<PartyID PID="LEI-8IBZUGJ7JPLH368JE346"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>PLATFORM_OPERATOR</PartyRoleType>
+			<PartyID PID="LEI-8IBZUGJ7JPLH368JE346"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>LEGAL_ADVISOR</PartyRoleType>
+			<PartyID PID="LEI-222100XGGHYO4PT4SR90"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>LEGAL_ADVISOR</PartyRoleType>
+			<PartyID PID="LEI-213800Y1339A3PK3MM84"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>LEGAL_ADVISOR</PartyRoleType>
+			<PartyID PID="LEI-2138009HQG7PPER2C920"/>
+		</PartyRole>
+		<Party PID="LEI-5493006YXS1U5GIHE750">
+			<PartyName>European Investment Bank</PartyName>
+			<LEIIdentifier>5493006YXS1U5GIHE750</LEIIdentifier>
+			<PartyRating>
+				<Rating>
+					<RatingAgency>SP</RatingAgency>
+					<RatingValue>AAA</RatingValue>
+				</Rating>
+				<Rating>
+					<RatingAgency>MOODYS</RatingAgency>
+					<RatingValue>Aaa</RatingValue>
+				</Rating>
+				<Rating>
+					<RatingAgency>FITCH</RatingAgency>
+					<RatingValue>AAA</RatingValue>
+				</Rating>
+			</PartyRating>
+		</Party>
+		<Party PID="LEI-8IBZUGJ7JPLH368JE346">
+			<PartyName>Goldman Sachs Bank Europe SE</PartyName>
+			<LEIIdentifier>8IBZUGJ7JPLH368JE346</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-O2RNE8IBXP4R0TD8PU41">
+			<PartyName>Société Générale</PartyName>
+			<LEIIdentifier>O2RNE8IBXP4R0TD8PU41</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-7245000NHIQTPK869X55">
+			<PartyName>Banco Santander, S.A.</PartyName>
+			<LEIIdentifier>7245000NHIQTPK869X55</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-222100XGGHYO4PT4SR90">
+			<PartyName>Clifford Chance</PartyName>
+			<LEIIdentifier>222100XGGHYO4PT4SR90</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-213800Y1339A3PK3MM84">
+			<PartyName>Allen Overy LLP</PartyName>
+			<LEIIdentifier>213800Y1339A3PK3MM84</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-2138009HQG7PPER2C920">
+			<PartyName>ASHURST LLP</PartyName>
+			<LEIIdentifier>2138009HQG7PPER2C920</LEIIdentifier>
+		</Party>
+		<Issuance>
+			<IssuanceType>PROGRAMME</IssuanceType>
+			<SpecifiedDenomination>100000</SpecifiedDenomination>
+			<FinalRedemptionAmountPercentage>100</FinalRedemptionAmountPercentage>
+			<SpecifiedCurrency>EUR</SpecifiedCurrency>
+			<PricingDate>2022-11-29</PricingDate>
+			<IssueDate>2022-11-29</IssueDate>
+			<SettlementDate>2022-11-29</SettlementDate>
+			<IssuePrice>100.00</IssuePrice>
+			<Proceeds>
+				<UseOfProceeds>The net proceeds of the issue of the Notes will be used in the general operations of EIB.</UseOfProceeds>
+			</Proceeds>
+			<Listing>
+				<Market>NOT_LISTED</Market>
+			</Listing>
+			<DltPlatform>
+				<Type>Hyperledger Besu</Type>
+				<Accessibility>PERMISSIONED</Accessibility>
+				<Role>Registration, Clearing and Settlement</Role>
+				<Operator>
+					<Operator>LEI-8IBZUGJ7JPLH368JE346</Operator>
+				</Operator>
+				<Identifier PID="LEI-969500FX8K40ZDW4F378">
+					<MIC>GSBE</MIC>
+				</Identifier>
+			</DltPlatform>
+			<GoverningLaw>GERMAN_LAW</GoverningLaw>
+			<SellingRestrictions>
+				<SellingRestriction>REGS_CAT2</SellingRestriction>
+			</SellingRestrictions>
+			<AdditionalSellingRestrictions>The Notes may not be legally or beneficially owned at any time by any U.S. Person (as defined in Regulation S) and accordingly are being offered and sold outside the United States to persons that are not U.S. Persons in reliance 
+on Regulation S.
+			</AdditionalSellingRestrictions>
+			<ManufacturerTargetMarket>EU_MIFIDII_PROF_AND_ECPS</ManufacturerTargetMarket>
+			<NegativePledge>NOT_APPLICABLE</NegativePledge>
+			<GrossUp>NOT_APPLICABLE</GrossUp>
+			<CrossDefault>NOT_APPLICABLE</CrossDefault>
+			<SubstitutionOrVariation>NOT_APPLICABLE</SubstitutionOrVariation>
+		</Issuance>
+		<Product>
+			<SecurityIdentifierList>
+				<SecurityIdentifier>
+					<ISIN>LU2542747121</ISIN>
+					<IdentifierType>ISIN</IdentifierType>
+				</SecurityIdentifier>
+			</SecurityIdentifierList>
+			<FormOfNote>DEMATERIALISED</FormOfNote>
+			<StatusOfNote>SENIOR_UNSECURED</StatusOfNote>
+			<AggregateNominalAmount>100000000</AggregateNominalAmount>
+			<MaturityDate>2024-11-29</MaturityDate>
+			<InterestPayment>
+				<InterestType>FIXED</InterestType>
+				<InterestRate>2.507</InterestRate>
+				<InterestCommencementDate>2022-11-29</InterestCommencementDate>
+				<InterestPayments>
+					<InterestPaymentFrequency>ANNUALLY</InterestPaymentFrequency>
+					<PayableDate>
+						<Day>29</Day>
+						<Month>11</Month>
+					</PayableDate>
+					<FirstPayment>
+						<PaymentDate>2021-11-29</PaymentDate>
+					</FirstPayment>
+				</InterestPayments>
+			</InterestPayment>
+			<DayCountFraction>ICMA_ACT/ACT</DayCountFraction>
+			<BusinessDayConvention>FOLLOWING_UNADJUSTED</BusinessDayConvention>
+			<BusinessDayCenter>TARGET2</BusinessDayCenter>
+		</Product>
+	</ICMABondDataTaxonomy>
+</Document>

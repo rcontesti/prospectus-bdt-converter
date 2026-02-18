@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 	This xml document was created by the International Capital Market Association (ICMA) Bond Data Taxonomy Working Group. 
+		This document is representative of the final terms of a security offering termsheet but does not represent an actual offering and is not inclusive of all fields required for the isssuance of a new security.-->
+<Document xmlns="urn:icma:xsd:ICMABondDataTaxonomy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:icma:xsd:ICMABondDataTaxonomy icma-bond-data-taxonomy.xsd">
+	<ICMABondDataTaxonomy>
+		<PartyRole>
+			<PartyRoleType>ISSUER</PartyRoleType>
+			<PartyID PID="LEI-969500KN90DZLHUN3566"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>REGISTRAR</PartyRoleType>
+			<PartyID PID="LEI-969500FX8K40ZDW4F377"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>PLATFORM_OPERATOR</PartyRoleType>
+			<PartyID PID="LEI-969500FX8K40ZDW4F377"/>
+		</PartyRole>
+		<Party PID="LEI-969500KN90DZLHUN3566">
+			<PartyName>SOCIETE GENERALE SFH</PartyName>
+			<LEIIdentifier>969500KN90DZLHUN3566</LEIIdentifier>
+		</Party>
+			<Party PID="LEI-969500FX8K40ZDW4F377">
+			<PartyName>SOCIETE GENERALE - FORGE</PartyName>
+			<LEIIdentifier>969500FX8K40ZDW4F377</LEIIdentifier>
+		</Party>
+		<Issuance>
+			<IssuanceType>PROGRAMME</IssuanceType>
+			<SpecifiedDenomination>100000</SpecifiedDenomination>
+			<FinalRedemptionAmountPercentage>100</FinalRedemptionAmountPercentage>
+			<SpecifiedCurrency>EUR</SpecifiedCurrency>
+			<PricingDate>2020-05-14</PricingDate>
+			<IssueDate>2020-05-14</IssueDate>
+			<SettlementDate>2020-05-14</SettlementDate>
+			<IssuePrice>100.00</IssuePrice>
+			<Listing>
+				<Market>LUXEMBOURG_STOCK_EXCHANGE</Market>
+				<MarketType>RMKT</MarketType>
+			</Listing>
+			<ClearingSettlementSystem>
+				<ClearingSettlementSystem>CLEARSTREAM_BANKING_S.A.</ClearingSettlementSystem>
+				<ClearingSettlementSystem>EUROCLEAR_BANK_SA/NV</ClearingSettlementSystem>
+			</ClearingSettlementSystem>
+			<DltPlatform>
+				<Type>Etherum</Type>
+				<Accessibility>PUBLIC</Accessibility>
+				<Role>Registration</Role>
+				<Operator>
+					<Operator>LEI-969500FX8K40ZDW4F377</Operator>
+				</Operator>
+				<Name>DEEP</Name>
+				<Identifier PID="LEI-969500FX8K40ZDW4F378">
+					<MIC>SGFG</MIC>
+				</Identifier>
+				<TokenType>SECURITY</TokenType>
+				<TokenTechnicalReference>ERC-20</TokenTechnicalReference>
+				<SmartContract>0x9915ced2820082a25a8992752aa43bcb0e1d1097</SmartContract>
+			</DltPlatform>
+			<MethodOfDistribution>NON-SYNDICATED</MethodOfDistribution>
+			<GoverningLaw>FRENCH_LAW</GoverningLaw>
+			<Documentation>
+				<DocumentDetail>
+					<DocumentName>Issue of €40,000,000 0.00 per cent. obligations de financement de l’habitat 
+due 14 May 2025 extendible up to 14 May 2026
+and registered in a distributed ledger technology
+(dispositif d’enregistrement électronique partagé)</DocumentName>
+					<DocumentDate>2020-05-12</DocumentDate>
+				</DocumentDetail>
+			</Documentation>
+			<SellingRestrictions>
+				<SellingRestriction>REGS_CAT2</SellingRestriction>
+			</SellingRestrictions>
+			<AdditionalSellingRestrictions>The Notes may not be legally or beneficially owned at any time by any U.S. Person (as defined in Regulation S) and accordingly are being offered and sold outside the United States to persons that are not U.S. Persons in reliance 
+on Regulation S.
+			</AdditionalSellingRestrictions>
+
+			<ManufacturerTargetMarket>EU_MIFIDII_PROF_AND_ECPS</ManufacturerTargetMarket>
+			<NegativePledge>NOT_APPLICABLE</NegativePledge>
+			<GrossUp>NOT_APPLICABLE</GrossUp>
+			<CrossDefault>NOT_APPLICABLE</CrossDefault>
+			<SubstitutionOrVariation>NOT_APPLICABLE</SubstitutionOrVariation>
+			<CallPutOption>CHANGE_OF_CONTROL_PUT_EVENT</CallPutOption>
+		</Issuance>
+		<Product>
+			<SecurityIdentifierList>
+				<SecurityIdentifier>
+					<ISIN>FR0013510518</ISIN>
+					<IdentifierType>ISIN</IdentifierType>
+				</SecurityIdentifier>
+			</SecurityIdentifierList>
+			<Series>
+				<SeriesNumber>101</SeriesNumber>
+				<SeriesAmount>40000000</SeriesAmount>
+			</Series>
+			<Tranche>
+				<TrancheNumber>1</TrancheNumber>
+				<TrancheAmount>40000000</TrancheAmount>
+			</Tranche>
+			<FormOfNote>DEMATERIALISED</FormOfNote>
+			<StatusOfNote>SENIOR_SECURED</StatusOfNote>
+			<AggregateNominalAmount>40000000</AggregateNominalAmount>
+			<ExpectedProductRating>
+				<Rating>
+					<RatingAgency>FITCH</RatingAgency>
+					<RatingValue>AAA</RatingValue>
+				</Rating>
+				<Rating>
+					<RatingAgency>MOODYS</RatingAgency>
+					<RatingValue>Aaa</RatingValue>
+				</Rating>
+			</ExpectedProductRating>
+			<MaturityDate>2025-05-14</MaturityDate>
+			<InterestPayment>
+				<InterestType>FIXED</InterestType>
+				<InterestRate>0.12345678901234567890123456789012345678901234567890</InterestRate>
+				<InterestCommencementDate>2020-05-14</InterestCommencementDate>
+				<InterestPayments>
+					<InterestPaymentFrequency>ANNUALLY</InterestPaymentFrequency>
+					<PayableDate>
+						<Day>14</Day>
+						<Month>5</Month>
+					</PayableDate>
+					<FirstPayment>
+						<PaymentDate>2021-05-14</PaymentDate>
+					</FirstPayment>
+				</InterestPayments>
+			</InterestPayment>
+			<DayCountFraction>ICMA_ACT/ACT</DayCountFraction>
+			<BusinessDayConvention>MODIFIED_FOLLOWING_ADJUSTED</BusinessDayConvention>
+			<BusinessDayCenter>TARGET2</BusinessDayCenter>
+		</Product>
+	</ICMABondDataTaxonomy>
+</Document>

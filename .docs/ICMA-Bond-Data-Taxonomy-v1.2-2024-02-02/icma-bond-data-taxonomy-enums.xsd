@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2023 sp1 (x64) (http://www.altova.com) by  (ICMA) -->
+<!-- 
+	This xsd document was created by the International Capital Market Association (ICMA) Bond Data Taxonomy Working Group.
+	
+	This component is subject to the following terms of use:
+	This component is provided 'AS IS'. ICMA does not give and excludes any express or implied warranties with respect to this component such as but not limited to any guarantee 
+	as to its quality, supply or availability.
+	The user  has no right, or right to authorise others, to:
+	 - rent, lease, or sell this component;
+	 - display publicly, distribute or otherwise provide this component;
+	 - remove, alter, cover, obfuscate or cancel from view any copyright or other proprietary rights notices, marks or legends appearing in this physical medium.
+	
+	Any and all rights, including title, ownership rights, copyright, trademark, patents, and any other intellectual property rights of whatever nature in this component will 
+	remain the exclusive property of ICMA or its licensors. 
+-->
+<xs:schema xmlns="urn:icma:xsd:ICMABondDataTaxonomy" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:icma:xsd:ICMABondDataTaxonomy" targetNamespace="urn:icma:xsd:ICMABondDataTaxonomy" elementFormDefault="qualified" version="1.2">
+	<xs:simpleType name="PartyRoleType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ISSUER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Issuer</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">The issuer as defined and registered by the LEI asssociated with the issuer. The issuer is a legal entity that is creating and selling a security for the purpose of raising capital in exchange for shares in the entity or a debt owed by the entity to the holder.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="GUARANTOR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Guarantor</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">An institution that guarantees the payment and obligations of an issuer's security offering.
+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LEAD_MANAGER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">LeadManager</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Used when only one lead manager.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="JOINT_LEAD_MANAGER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">JointLeadManager</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ARRANGER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Arranger</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="FISCAL_AGENT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">FiscalAgent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PRINCIPAL_PAYING_AGENT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">PrincipalPayingAgent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CALCULATION_AGENT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CalculationAgent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="STABILISATION_MANAGER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">StabilisationManager</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TRUSTEE">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Trustee</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="REGISTRAR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Registrar</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CUSTODIAN">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Custodian</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PLATFORM_OPERATOR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">PlatformOperator</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DIRECT_PARTICIPANT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">DirectParticipant</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DEPOSIT_BANK">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">DepositBank</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CASH_TOKEN_MANAGER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CashTokenManager</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="JOINT_GLOBAL_COORDINATOR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">JointGlobalCoordinator</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="JOINT_BOOKRUNNER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">JointBookRunner</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MARKET_PRACTICE_ADVISOR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">MarketPracticeAdvisor</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TRANSFER_AGENT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">TransferAgent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ISSUE_AGENT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">IssueAgent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LEGAL_ADVISOR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">LegalAdvisor</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PAYING_AGENT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">PayingAgent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LODGING_AGENT">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">LodgingAgent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CENTRAL_ACCOUNT_KEEPER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CentralAccountKeeper</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TOKENISATION_MANAGER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">TokenisationRegistrar</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CRYPTO_SECURITIES_REGISTRAR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CryptoSecuritiesRegistrar</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN"></xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="OTHER_PARTYROLE_TYPE">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">OtherPartyRoleType</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Any other party role that is not defined in the enumerations.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RatingAgency">
+		<xs:annotation>
+			<xs:documentation source="Name" xml:lang="EN">RatingAgency</xs:documentation>
+			<xs:documentation source="Definition" xml:lang="EN">ICMA PM Handbook: "Ratings Agency" means Fitch Ratings Limited ("Fitch"), Moody's Investors Service, Limited ("Moody’s") or SandP Global Ratings Europe Limited ("SandP") or any other statistical ratings organisation which rates the Issuer's debt securities.
+</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FITCH">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">FITCH</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">FITCH Rating Agency</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MOODYS">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">MOODYS</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">MOODYS Rating Agency</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SP">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">SP</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">StandardandPoors Rating Agency</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DBRS">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">DBRS</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">DBRS Rating Agency</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RatingOutlook">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="POSITIVE"/>
+			<xs:enumeration value="STABLE"/>
+			<xs:enumeration value="NEGATIVE"/>
+			<xs:enumeration value="DEVELOPING"/>
+			<xs:enumeration value="NOT_MEANINGFULL"/>
+			<xs:enumeration value="EVOLVING"/>
+			<xs:enumeration value="NOT_APPLICABLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Issuance Types-->
+	<xs:simpleType name="IssuanceType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PROGRAMME">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">PROGRAMME</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">A bond issuance platform, consisting of a base offer document and suite of master contracts, facilitating the issue of bonds through drawdowns.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="STANDALONE">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">STANDALONE</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">A primary offer not made under a programme.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="StatusOfNote">
+		<xs:annotation>
+			<xs:documentation source="Name" xml:lang="EN">StatusOfNote</xs:documentation>
+			<xs:documentation source="Definition" xml:lang="EN">Captures information relating to the seniority of the note.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SENIOR_SECURED"/>
+			<xs:enumeration value="SENIOR_UNSECURED"/>
+			<xs:enumeration value="SENIOR_PREFERRED"/>
+			<xs:enumeration value="SENIOR_NON_PREFERRED"/>
+			<xs:enumeration value="SUBORDINATED"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FormOfNote">
+		<xs:annotation>
+			<xs:documentation source="Name" xml:lang="EN">FormOfNote</xs:documentation>
+			<xs:documentation source="Definition" xml:lang="EN">Whether Bearer, Registered, or other formats.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BEARER"/>
+			<xs:enumeration value="REGISTERED"/>
+			<xs:enumeration value="DEMATERIALISED"/>
+			<xs:enumeration value="BOOK_ENTRY"/>
+			<xs:enumeration value="COLLECTIVE_DEBT_REGISTERED_CLAIM"/>
+			<xs:enumeration value="DEMATERIALISED_BEARER"/>
+			<xs:enumeration value="DEMATERIALISED_BOOK_ENTRY"/>
+			<xs:enumeration value="DEMATERIALISED_REGISTERED"/>
+			<xs:enumeration value="FED_BOOK_ENTRY"/>
+			<xs:enumeration value="MATERIALISED_BEARER"/>
+			<xs:enumeration value="MATERIALISED_REGISTERED"/>
+			<xs:enumeration value="UNCERTIFICATED_DEMATERIALISED_BOOK_ENTRY"/>
+			<xs:enumeration value="UNCERTIFICATED_REGISTERED"/>
+			<xs:enumeration value="UNCERTIFIED"/>
+			<xs:enumeration value="UNCERTIFIED_DEMATERIALISED_BOOK_ENTRY"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentifierValue">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="IdentifierType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ISIN"/>
+			<xs:enumeration value="WKN"/>
+			<xs:enumeration value="CUSIP"/>
+			<xs:enumeration value="COMMON_CODE"/>
+			<xs:enumeration value="TEMPORARY_ISIN"/>
+			<xs:enumeration value="TEMPORARY_COMMON_CODE"/>
+			<xs:enumeration value="DTI"/>
+			<xs:enumeration value="CMU"/>
+			<xs:enumeration value="FIGI"/>
+			<xs:enumeration value="SEDOL"/>
+			<xs:enumeration value="VALOR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InterestType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FIXED"/>
+			<xs:enumeration value="FLOATING"/>
+			<xs:enumeration value="ZERO_COUPON"/>
+			<xs:enumeration value="INDEX_LINKED_INTEREST"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DayCountFraction">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ICMA_ACT/ACT"/>
+			<xs:enumeration value="ISDA_ACT/ACT"/>
+			<xs:enumeration value="30/360"/>
+			<xs:enumeration value="30/365"/>
+			<xs:enumeration value="ACT/360"/>
+			<xs:enumeration value="ACT/365"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CalculationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="COMPOUND_DAILY"/>
+			<xs:enumeration value="WEIGHTED_AVERAGE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OptionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CALL"/>
+			<xs:enumeration value="PUT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DeterminationMethod">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INDEX"/>
+			<xs:enumeration value="CALCULATED"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DistributionMethod">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SYNDICATED"/>
+			<xs:enumeration value="NON-SYNDICATED"/>
+			<xs:enumeration value="AUCTION"/>
+			<xs:enumeration value="PRIVATE_PLACEMENT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ObservationMethod">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="OBSERVATION_SHIFT"/>
+			<xs:enumeration value="LAG"/>
+			<xs:enumeration value="LOCK-OUT"/>
+			<xs:enumeration value="PAYMENT_DELAY"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SellingRestrictionCode">
+		<xs:annotation>
+			<xs:documentation source="Name" xml:lang="EN">SELLING_RESTRICTIONS</xs:documentation>
+			<xs:documentation source="Definition" xml:lang="EN">Categories of potential investors to which the notes are offered.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="REGS_CAT1"/>
+			<xs:enumeration value="REGS_CAT2"/>
+			<xs:enumeration value="REGS_CAT3"/>
+			<xs:enumeration value="144A"/>
+			<xs:enumeration value="TEFRA_C"/>
+			<xs:enumeration value="TEFRA_D"/>
+			<xs:enumeration value="TEFRA_NA"/>
+			<xs:enumeration value="SEC_REG"/>
+			<xs:enumeration value="NOT_APPLICABLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PRIIPsRestriction">
+		<xs:annotation>
+			<xs:documentation source="Name" xml:lang="EN">PRIIPsRestriction</xs:documentation>
+			<xs:documentation source="Definition" xml:lang="EN">Any prohibition of sales to EEA and/or UK retail investors pursuant to the EEA and/or UK PRIIPs Regulation.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NO_EEA"/>
+			<xs:enumeration value="NO_UK"/>
+			<xs:enumeration value="NOT_APPLICABLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ManufacturerTargetMarketType">
+		<xs:annotation>
+			<xs:documentation source="Name" xml:lang="EN">ManufacturerTargetMarketType</xs:documentation>
+			<xs:documentation source="Definition" xml:lang="EN">The target market assessment in respect of the notes and which channels for distribution of the notes are appropriate.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EU_MIFIDII_PROF_AND_ECPS">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">EU_MIFIDII_PROF_AND_ECPS</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">MIFID II product governance / Professional investors and ECPs only target market.
+</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EU_MIFIR_PROF_AND_ECPS"/>
+			<xs:enumeration value="UK_MIFIR_PROF_AND_ECPS"/>
+			<xs:enumeration value="EU_MIFIDII_RETAIL_PROF_ECPS"/>
+			<xs:enumeration value="UK_MIFIR_RETAIL_PROF_ECPS"/>
+			<xs:enumeration value="NOT_APPLICABLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CallPutOptionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INVESTOR_PUT"/>
+			<xs:enumeration value="CHANGE_OF_CONTROL_PUT_EVENT"/>
+			<xs:enumeration value="ISSUER_CALL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ListingMarketType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RMKT"/>
+			<xs:enumeration value="RMQI"/>
+			<xs:enumeration value="MSGM"/>
+			<xs:enumeration value="MLTF"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ClearingSettlementSystemName">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CLEARSTREAM_BANKING_FRANKFURT"/>
+			<xs:enumeration value="DTCC"/>
+			<xs:enumeration value="EUROCLEAR_BANK_SA/NV"/>
+			<xs:enumeration value="CLEARSTREAM_BANKING_S.A."/>
+			<xs:enumeration value="CENTRAL_MONEY_MARKETS_UNIT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="GoverningLaw">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AUSTRIAN_LAW"/>
+			<xs:enumeration value="BELGIAN_LAW"/>
+			<xs:enumeration value="CANADIAN_LAW"/>
+			<xs:enumeration value="DANISH_LAW"/>
+			<xs:enumeration value="DUTCH_LAW"/>
+			<xs:enumeration value="ENGLISH_LAW"/>
+			<xs:enumeration value="FINISH_LAW"/>
+			<xs:enumeration value="FRENCH_LAW"/>
+			<xs:enumeration value="GERMAN_LAW"/>			
+			<xs:enumeration value="ITALIAN_LAW"/>
+			<xs:enumeration value="LUXEMBOURG_LAW"/>
+			<xs:enumeration value="NEW_SOUTH_WALES_LAW"/>
+			<xs:enumeration value="NEW_YORK_LAW"/>
+			<xs:enumeration value="ONTARIO_LAW"/>
+			<xs:enumeration value="SPANISH_LAW"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BusinessDayCenter">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TARGET"/>
+			<xs:enumeration value="TARGET2"/>
+			<xs:enumeration value="FRANKFURT"/>
+			<xs:enumeration value="NEW_YORK"/>
+			<xs:enumeration value="LUXEMBOURG"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BusinessDayConvention">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FOLLOWING_UNADJUSTED"/>
+			<xs:enumeration value="PRECEDING"/>
+			<xs:enumeration value="MODIFIED_FOLLOWING_ADJUSTED"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InterestPaymentFrequency">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ANNUALLY"/>
+			<xs:enumeration value="SEMIANNUALLY"/>
+			<xs:enumeration value="QUARTERLY"/>
+			<xs:enumeration value="NONE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TermPeriod">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DAYS"/>
+			<xs:enumeration value="WEEK"/>
+			<xs:enumeration value="MONTH"/>
+			<xs:enumeration value="YEAR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InterestRateBenchmarkCode">
+		<xs:annotation>
+			<xs:documentation source="Name" xml:lang="EN">InterestRateBenchmark</xs:documentation>
+			<xs:documentation source="Definition" xml:lang="EN">The code of the underlying security used to define the reference rate on the basis on which the periodic interest payments are calculated.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BOER">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">BankOfEnglandBaseRate</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Bank of England base rate (BOER).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="BBSW">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">BBSW</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Australian Financial Markets Association (AFMA) Bank-Bill Reference Rate (BBSW).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="BCOL">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CABROVER</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Bank of Canada Overnight Lending Rate (CABROVER).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="BJUO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">MUTSCALM</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Bank of Japan Uncollateralised Overnight Call Rate (MUTSCALM).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="BUBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">BUBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Budapest Interbank Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CDOR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CDOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Canadian Dollar Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CIBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Copenhagen Interbank Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CORA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">CORRA</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Canadian Overnight Repo Rate Average (CAONREPO). </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CZNA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Czeonia</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Czech National Bank Reference Interest Rate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EFFR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">FEDL01</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EONA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">EONIA</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Euro OverNight Index Average rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EONS">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">EONIASwaps</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Euro OverNight Index Average swap rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ESTR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">ESTER</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Euro Short Term Rate</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ETIO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">JBATIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Euroyen Tokyo Interbank Offered Rate (EUYN03M).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EURI">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Euribor</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Euro Interbank Offer Rate is the rate at which Euro inter-bank term deposits within the Euro zone are offered by one prime bank to another prime bank.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EUUS">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">EURODOLLAR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Rate for the eurodollars, time deposits denominated in U.S. dollars at banks outside the United States, and thus are not under the jurisdiction of the Federal Reserve.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ECBR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">EuropeanCentralBankBaseRate</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">European Central Bank Base Rate (ECBR).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EUCH">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">EuroSwiss</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Swiss Franc LIBOR rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="FUSW">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">FutureSWAP</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Portion of a synthetic curve that is composed of Eurodollar or Treasury or similar Futures and Swap rates. The term usually begins at 3 months to 2 years for the futures strip component with the Swaps filling in the points to 10 years and beyond.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="GCFR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">GCFRepo</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">GCF Repo Index, the Depository Trust &amp; Clearing Corporation (DTCC) general collateral finance repurchase agreements index.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="HKIO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">HIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Hong Kong Interbank Offered Rate (HIHD01M).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ISDA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">ISDAFIX</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Worldwide common reference rate value for fixed interest rate swap rates, as defined by the International Swaps and Derivatives Association (ISDA).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="JIBA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">JIBAR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Johannesburg Interbank Agreed Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LDOR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">LenderOwnRate</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Lender Own Rate (LDOR).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LIBI">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">LIBID</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Rate at which major international banks are willing to take deposits from one another, is normally 1/8 percent below LIBOR.&#13;
+&#13;
+London InterBank Bid Rate, the rate bid by banks on Eurocurrency deposits; the international rate that banks lend to other banks.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="LIBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">LIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">London Interbank Offered Rate, the interest rate that major international banks in London charge each other for borrowing.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MOSP">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">MOSPRIM</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Moscow Prime Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MAAA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">MuniAAA</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Benchmark curve used for municipals based on the best credit rating for municipal market debt.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="OTHR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">OTHER</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Any other rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="NIBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">NIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Norwegian Interbank Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="OBFR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">OBFR01</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PFAN">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Pfandbriefe</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Pfandbriefe security is a collateralised bullet bond backed by either mortgage loans or loans to the public sector. Pfandbriefe differ from traditional asset-backed securities in significant ways. The most important difference is that Pfandbriefe carry no pre-payment risk since they remain on the balance sheet of the issuing institution. Therefore, their spreads over sovereign bonds are attributable to liquidity and credit quality alone. New indices have been created and existing indices have been modified in response to the growing importance of the Pfandbriefe market. The Deutsche Borse has three synthetic indices called REX, JEX, and PEX. The Pfandbriefe curve is used as a reference for credit as well as mortgage market.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PRBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">PRIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Czech Fixing of Interest Rates on Interbank Deposits.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="RCTR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">RBATCTR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">RBA Cash Rate Target  (RBATCTR).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SOFR">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">SOFR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Secured Overnight Financing Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SONA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">SONIA</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Sterling Over Night Index Average.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="STBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">STIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Stockholm Interbank Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SWAP">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">SWAP</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">In curve construction, Swap is the long portion of the curve constituting about 3 years to 30 years term.&#13;
+&#13;
+The exchange of one security, currency or interest rate for another to change the maturity (bonds), or quality of issues (stocks or bonds), or because investment objectives have changed.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TIBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">TIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Tokyo Interbank Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TLBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">TELBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Tel Aviv Interbank Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TREA">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">Treasury</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Treasury benchmark that comes in three types: the yield curve, the par curve, and the spot curve. All curves also have a constituent time series.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="WIBO">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">WIBOR</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Warsaw Interbank Offered Rate.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ListingMarket">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AIAF"/>
+			<xs:enumeration value="AUSTRALIAN_SECURITIES_EXCHANGE"/>
+			<xs:enumeration value="BADENWUERTTEMBERG_STOCK_EXCHANGE"/>
+			<xs:enumeration value="BERLIN_STOCK_EXCHANGE"/>
+			<xs:enumeration value="BORSA_ITALIANA"/>
+			<xs:enumeration value="CAYMAN_STOCK_EXCHANGE"/>
+			<xs:enumeration value="COPENHAGEN_STOCK_EXCHANGE"/>
+			<xs:enumeration value="DÜSSELDORF_STOCK_EXCHANGE"/>
+			<xs:enumeration value="EURONEXT_AMSTERDAM"/>
+			<xs:enumeration value="EURONEXT_BRUSSELS"/>
+			<xs:enumeration value="EURONEXT_DUBLIN"/>
+			<xs:enumeration value="EURONEXT_LISBON"/>
+			<xs:enumeration value="EURONEXT_PARIS"/>
+			<xs:enumeration value="EXTRAMOT"/>
+			<xs:enumeration value="FRANKFURT_STOCK_EXCHANGE"/>
+			<xs:enumeration value="HAMBURG_STOCK_EXCHANGE"/>
+			<xs:enumeration value="HANNOVER_STOCK_EXCHANGE"/>
+			<xs:enumeration value="HONGKONG_STOCK_EXCHANGE"/>
+			<xs:enumeration value="INDIAN_INTERNATIONAL_EXCHANGE"/>
+			<xs:enumeration value="INTERNATIONAL_STOCK_EXCHANGE"/>
+			<xs:enumeration value="JOHANNESBURG_STOCK_EXCHANGE"/>
+			<xs:enumeration value="LABUANINTERNATIONAL_FINANCIAL_EXCHANGE"/>
+			<xs:enumeration value="LONDON_STOCK_EXCHANGE"/>
+			<xs:enumeration value="LUXEMBOURG_STOCK_EXCHANGE"/>
+			<xs:enumeration value="MARF"/>
+			<xs:enumeration value="MUNICH_STOCK_EXCHANGE"/>
+			<xs:enumeration value="NASDAQ_COPENHAGEN_A/S"/>
+			<xs:enumeration value="NASDAQ_DUBAI"/>
+			<xs:enumeration value="NASDAQ_HELSINKI"/>
+			<xs:enumeration value="NASDAQ_STOCKHOLM"/>
+			<xs:enumeration value="NEW_ZEALAND_STOCK_EXCHANGE"/>
+			<xs:enumeration value="NOMX_STOCKHOLM"/>
+			<xs:enumeration value="OSLO_STOCK_EXCHANGE"/>
+			<xs:enumeration value="SINGAPORE_SGX"/>
+			<xs:enumeration value="SIX_SWISS_EXCHANGE"/>
+			<xs:enumeration value="STUTTGART_STOCK_EXCHANGE"/>
+			<xs:enumeration value="TAIPEI_EXCHANGE"/>
+			<xs:enumeration value="TOKYO_STOCK_EXCHANGE"/>
+			<xs:enumeration value="VIENNA_STOCK_EXCHANGE"/>
+			<xs:enumeration value="WARSAW_STOCK_EXCHANGE"/>
+			<xs:enumeration value="NOT_LISTED"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EventType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CONTINGENCY">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">ContingencyEvent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Indication of whether the terms and conditions of the note provide for a contingency event. Basic indication (not including any detail).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="VIABILITY">
+				<xs:annotation>
+					<xs:documentation source="Name" xml:lang="EN">ViabilityEvent</xs:documentation>
+					<xs:documentation source="Definition" xml:lang="EN">Indication of whether the terms and conditions of the note provide for a viability event. Basic indication (not including any detail).</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Applicability">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="APPLICABLE"/>
+			<xs:enumeration value="NOT_APPLICABLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BrokenType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LONG"/>
+			<xs:enumeration value="SHORT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FeeAllocationType">
+		<xs:annotation>
+			<xs:documentation source="Definition" xml:lang="EN">Defines how fees are allocated to the managers/dealers, either Equal or Proportional.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EQUAL">
+				<xs:annotation>
+					<xs:documentation source="Definition" xml:lang="EN">Equally allocated across dealers/managers.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PROPORTIONAL">
+				<xs:annotation>
+					<xs:documentation source="Definition" xml:lang="EN">Proportional to underwriting commitments of dealers/managers.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AmountType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PRICE_PERCENT"/>
+			<xs:enumeration value="PER_ISSUE_AMOUNT"/>
+			<xs:enumeration value="PER_DENOMINATION"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DltPlatformAcessibilityType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PUBLIC">
+				<xs:annotation>
+					<xs:documentation source="Definition" xml:lang="EN">A public DLT with no entity controlling access to the network.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PRIVATE">
+				<xs:annotation>
+					<xs:documentation source="Definition" xml:lang="EN">A private DLT operated by a single entity or group of entities that control access.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PERMISSIONED">
+					<xs:annotation>
+						<xs:documentation source="Definition" xml:lang="EN">A public DLT except identity verification and permissions are required.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CONSORTIUM">
+				<xs:annotation>
+					<xs:documentation source="Definition" xml:lang="EN">Similar to a private DLT except that there is a consortium of entities that control access. </xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="HYBRID">
+				<xs:annotation>
+					<xs:documentation source="Definition" xml:lang="EN">A DLT where transactions are recorded on a private chain and at the same time a separate digital stamp is made on a public chain.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="SEMI_PUBLIC">
+				<xs:annotation>
+					<xs:documentation source="Definition" xml:lang="EN">A DLT with a public and private part where the private part is controlled by one or more entities.</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ProvisionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FIXED_RATE"/>
+			<xs:enumeration value="FLOATING_RATE"/>
+			<xs:enumeration value="ZERO_COUPON"/>
+			<xs:enumeration value="INDEX_LINKED"/>
+			<xs:enumeration value="DUAL_CURRENCY"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="RedemptionPaymentBasisType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PAR"/>
+			<xs:enumeration value="PARTLY_PAID"/>
+			<xs:enumeration value="INDEX_LINKED_INTEREST"/>
+			<xs:enumeration value="INSTALLMENT"/>
+			<xs:enumeration value="DUAL_CURRENCY"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

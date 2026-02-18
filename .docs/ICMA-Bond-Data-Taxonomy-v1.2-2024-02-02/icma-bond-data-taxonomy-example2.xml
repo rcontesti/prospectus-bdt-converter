@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 	This xml document was created by the International Capital Market Association (ICMA) Bond Data Taxonomy Working Group. 
+		This document is representative of the final terms of a security offering termsheet but does not represent an actual offering and is not inclusive of all fields required for the isssuance of a new security.-->
+<Document xmlns="urn:icma:xsd:ICMABondDataTaxonomy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:icma:xsd:ICMABondDataTaxonomy icma-bond-data-taxonomy.xsd">
+	<ICMABondDataTaxonomy>
+		<PartyRole>
+			<PartyRoleType>ISSUER</PartyRoleType>
+			<PartyID PID="LEI-222100W4EEAQ77386N50"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-984500F7D3A258R1CB96"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-54930056FHWP7GIWYY08"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-KX1WK48MPD4Y2NCUIZ63"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>STABILISATION_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-KX1WK48MPD4Y2NCUIZ63"/>
+		</PartyRole>
+		<Party PID="LEI-222100W4EEAQ77386N50">
+			<PartyName>European Stability Mechanism</PartyName>
+			<LEIIdentifier>222100W4EEAQ77386N50</LEIIdentifier>
+			<PartyRating>
+				<Rating>
+					<RatingAgency>FITCH</RatingAgency>
+					<RatingValue>AAA</RatingValue>
+					<RatingOutlook>STABLE</RatingOutlook>
+				</Rating>
+				<Rating>
+					<RatingAgency>SP</RatingAgency>
+					<RatingValue>AAA</RatingValue>
+					<RatingOutlook>STABLE</RatingOutlook>
+				</Rating>
+				<Rating>
+					<RatingAgency>MOODYS</RatingAgency>
+					<RatingValue>Aaa</RatingValue>
+					<RatingOutlook>STABLE</RatingOutlook>
+				</Rating>
+			</PartyRating>
+		</Party>
+		<Party PID="LEI-984500F7D3A258R1CB96">
+			<PartyName>Citibank Europe Public Limited Company</PartyName>
+			<LEIIdentifier>984500F7D3A258R1CB96</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-54930056FHWP7GIWYY08">
+			<PartyName>Goldman Sachs Bank Europe SE</PartyName>
+			<LEIIdentifier>54930056FHWP7GIWYY08</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-KX1WK48MPD4Y2NCUIZ63">
+			<PartyName>NATIXIS</PartyName>
+			<LEIIdentifier>KX1WK48MPD4Y2NCUIZ63</LEIIdentifier>
+		</Party>
+		<Issuance>
+			<IssuanceType>PROGRAMME</IssuanceType>
+			<SpecifiedDenomination>0.01</SpecifiedDenomination>
+			<FinalRedemptionAmountPercentage>100</FinalRedemptionAmountPercentage>
+			<SpecifiedCurrency>EUR</SpecifiedCurrency>
+			<PricingDate>2022-12-21</PricingDate>
+			<IssueDate>2024-10-24</IssueDate>
+			<SettlementDate>2022-12-26</SettlementDate>
+			<IssuePrice>91.921</IssuePrice>
+			<Fee>
+				<Percentage>2.3</Percentage>
+				<FeeAllocationType>PROPORTIONAL</FeeAllocationType>
+			</Fee>
+			<Proceeds>
+				<Net>1844358356.16</Net>
+			</Proceeds>
+			<Listing>
+				<Market>LONDON_STOCK_EXCHANGE</Market>
+				<MarketType>RMKT</MarketType>
+			</Listing>
+			<ClearingSettlementSystem>
+				<ClearingSettlementSystem>CLEARSTREAM_BANKING_FRANKFURT</ClearingSettlementSystem>
+			</ClearingSettlementSystem>
+			<MethodOfDistribution>SYNDICATED</MethodOfDistribution>
+			<GoverningLaw>LUXEMBOURG_LAW</GoverningLaw>
+			<Documentation>
+				<DocumentDetail>
+					<DocumentName>Issue of EUR2,000,000,000 1.00 per cent. Notes due 23 June 2027 asTranche 2 ofSeries 287</DocumentName>
+					<DocumentDate>2022-10-20</DocumentDate>
+				</DocumentDetail>
+			</Documentation>
+			<SellingRestrictions>
+				<SellingRestriction>REGS_CAT2</SellingRestriction>
+				<SellingRestriction>TEFRA_C</SellingRestriction>
+			</SellingRestrictions>
+			<AdditionalSellingRestrictions>NOT_APPLICABLE</AdditionalSellingRestrictions>
+			<ManufacturerTargetMarket>EU_MIFIR_PROF_AND_ECPS</ManufacturerTargetMarket>
+		</Issuance>
+		<Product>
+			<SecurityIdentifierList>
+				<SecurityIdentifier>
+					<ISIN>EU000A1Z99Q7</ISIN>
+					<IdentifierType>ISIN</IdentifierType>
+				</SecurityIdentifier>
+				<SecurityIdentifier>
+					<DTI>1B9BDHNPC</DTI>
+					<IdentifierType>DTI</IdentifierType>
+				</SecurityIdentifier>
+				<SecurityIdentifier>
+					<COMMON_CODE>248411112</COMMON_CODE>
+					<IdentifierType>COMMON_CODE</IdentifierType>
+				</SecurityIdentifier>
+				<SecurityIdentifier>
+					<WKN>248411112</WKN>
+					<IdentifierType>WKN</IdentifierType>
+				</SecurityIdentifier>
+			</SecurityIdentifierList>
+			<Series>
+				<SeriesNumber>287</SeriesNumber>
+			</Series>
+			<Tranche>
+				<TrancheNumber>2</TrancheNumber>
+			</Tranche>
+			<FormOfNote>BEARER</FormOfNote>
+			<StatusOfNote>SENIOR_UNSECURED</StatusOfNote>
+			<AggregateNominalAmount>2000000000</AggregateNominalAmount>
+			<MaturityDate>2027-06-23</MaturityDate>
+			<InterestPayment>
+				<InterestType>FIXED</InterestType>
+				<InterestRate>1.0</InterestRate>
+				<InterestCommencementDate>2023-05-23</InterestCommencementDate>
+				<InterestPayments>
+					<InterestPaymentFrequency>ANNUALLY</InterestPaymentFrequency>
+					<PayableDate>
+						<Day>23</Day>
+						<Month>6</Month>
+					</PayableDate>
+					<FirstPayment>
+						<PaymentDate>2023-06-23</PaymentDate>
+						<BrokenDateType>LONG</BrokenDateType>
+						<Amount>21698630.14</Amount>
+					</FirstPayment>
+				</InterestPayments>
+			</InterestPayment>
+			<DayCountFraction>ICMA_ACT/ACT</DayCountFraction>
+			<BusinessDayConvention>FOLLOWING_UNADJUSTED</BusinessDayConvention>
+			<BusinessDayCenter>LUXEMBOURG</BusinessDayCenter>
+		</Product>
+	</ICMABondDataTaxonomy>
+</Document>

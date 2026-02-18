@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 	This xml document was created by the International Capital Market Association (ICMA) Bond Data Taxonomy Working Group. 
+		This document is representative of a new security offering termsheet but does not represent an actual offering and is not inclusive of all fields required for the isssuance of a new security.-->
+<Document xmlns="urn:icma:xsd:ICMABondDataTaxonomy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:icma:xsd:ICMABondDataTaxonomy icma-bond-data-taxonomy.xsd">
+	<ICMABondDataTaxonomy>
+		<PartyRole>
+			<PartyRoleType>ISSUER</PartyRoleType>
+			<PartyID PID="LEI-DG3RU1DBUFHT4ZF9WN62"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-ANGGYXNX0JLX3X63JN86"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-7245009UXRIGIRYOBR48"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-8IBZUGJ7JPLH368JE346"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-IGJSJL3JD5P30I6NJZ34"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-DG3RU1DBUFHT4ZF9WN62"/>
+		</PartyRole>
+		<PartyRole>
+			<PartyRoleType>JOINT_LEAD_MANAGER</PartyRoleType>
+			<PartyID PID="LEI-BFM8T61CT2L1QCEMIK50"/>
+		</PartyRole>
+		<Party PID="LEI-DG3RU1DBUFHT4ZF9WN62">
+			<PartyName>Coöperatieve Rabobank U.A.</PartyName>
+			<LEIIdentifier>DG3RU1DBUFHT4ZF9WN62</LEIIdentifier>
+			<PartyRating>
+				<Rating>
+					<RatingAgency>FITCH</RatingAgency>
+					<RatingValue>A+</RatingValue>
+					<RatingOutlook>STABLE</RatingOutlook>
+				</Rating>
+				<Rating>
+					<RatingAgency>SP</RatingAgency>
+					<RatingValue>A+</RatingValue>
+					<RatingOutlook>STABLE</RatingOutlook>
+				</Rating>
+				<Rating>
+					<RatingAgency>MOODYS</RatingAgency>
+					<RatingValue>Aa2</RatingValue>
+					<RatingOutlook>STABLE</RatingOutlook>
+				</Rating>
+			</PartyRating>
+		</Party>
+		<Party PID="LEI-ANGGYXNX0JLX3X63JN86">
+			<PartyName>BNP Paribas</PartyName>
+			<LEIIdentifier>ANGGYXNX0JLX3X63JN86</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-7245009UXRIGIRYOBR48">
+			<PartyName>Credit Suisse</PartyName>
+			<LEIIdentifier>7245009UXRIGIRYOBR48</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-8IBZUGJ7JPLH368JE346">
+			<PartyName>Goldman Sachs Bank Europe SE</PartyName>
+			<LEIIdentifier>8IBZUGJ7JPLH368JE346</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-IGJSJL3JD5P30I6NJZ34">
+			<PartyName>Morgan Stanley</PartyName>
+			<LEIIdentifier>IGJSJL3JD5P30I6NJZ34</LEIIdentifier>
+		</Party>
+		<Party PID="LEI-BFM8T61CT2L1QCEMIK50">
+			<PartyName>UBS AG London Branch</PartyName>
+			<LEIIdentifier>BFM8T61CT2L1QCEMIK50</LEIIdentifier>
+		</Party>
+		<Issuance>
+			<IssuanceType>PROGRAMME</IssuanceType>
+			<SpecifiedDenomination>100000</SpecifiedDenomination>
+			<IntegralMultiples>100000</IntegralMultiples>
+			<FinalRedemptionAmountPercentage>100</FinalRedemptionAmountPercentage>
+			<SpecifiedCurrency>EUR</SpecifiedCurrency>
+			<PricingDate>2022-08-22</PricingDate>
+			<IssueDate>2022-08-22</IssueDate>
+			<SettlementDate>2022-08-30</SettlementDate>
+			<IssuePrice>99.841</IssuePrice>
+			<ReofferYield>3.912</ReofferYield>
+			<Benchmark>
+				<Identifier>
+					<ISIN>DE0001141869</ISIN>
+					<IdentifierType>ISIN</IdentifierType>
+				</Identifier>
+				<Ticker>
+					<Ticker>OBL</Ticker>
+				</Ticker>
+				<MaturityDate>2027-10-15</MaturityDate>
+				<InterestRate>1.300</InterestRate>
+				<Price>
+					<Price>100.97</Price>
+					<Yield>1.104</Yield>
+				</Price>
+			</Benchmark>
+			<MidSwapRate>1.1952</MidSwapRate>
+			<Fee>
+				<Percentage>2.3</Percentage>
+				<FeeAllocationType>EQUAL</FeeAllocationType>
+			</Fee>
+			<AllIn>
+				<SpreadToBenchmark>280.80</SpreadToBenchmark>
+			</AllIn>
+			<Listing>
+				<Market>LUXEMBOURG_STOCK_EXCHANGE</Market>
+				<MarketType>RMKT</MarketType>
+			</Listing>
+			<ClearingSettlementSystem>
+				<ClearingSettlementSystem>CLEARSTREAM_BANKING_S.A.</ClearingSettlementSystem>
+				<ClearingSettlementSystem>EUROCLEAR_BANK_SA/NV</ClearingSettlementSystem>
+			</ClearingSettlementSystem>
+			<MethodOfDistribution>SYNDICATED</MethodOfDistribution>
+			<GoverningLaw>DUTCH_LAW</GoverningLaw>
+			<Expenses>The Joint Lead Managers will pay own legal expenses and out-of-pocket 
+expenses, as well as listing fees. The Issuer will pay its own transaction related expenses, fiscal and paying agency fees, and any other Issuer 
+expenses relating to the Dated Subordinated Notes</Expenses>
+			<Documentation>
+				<DocumentDetail>
+					<DocumentName>Issuer’s EUR 160bn Global Medium Term Note Programme described in the base prospectus dated 18 May 2022, as supplemented on 11 August 2022.</DocumentName>
+					<DocumentDate>2022-05-18</DocumentDate>
+					<DocumentLink>https://www.rabobank.com/en/investors/funding/funding-programmes/Rabobank_Nederland_EUR_160_bn_GMTN_Programme.html</DocumentLink>
+				</DocumentDetail>
+			</Documentation>
+			<SellingRestrictions>
+				<SellingRestriction>REGS_CAT2</SellingRestriction>
+				<SellingRestriction>TEFRA_D</SellingRestriction>
+			</SellingRestrictions>
+			<PRIIPsRestriction>NOT_APPLICABLE</PRIIPsRestriction>
+			<AdditionalSellingRestrictions> UK, EEA and US and as further set out in the Base Prospectus. Restrictions 
+apply to offers, sales or transfers of the Dated Subordinated Notes in 
+various jurisdictions. In all jurisdictions, offers, sales or transfers may only 
+be affected to the extent lawful in the relevant jurisdiction, please refer to 
+the relevant section of the Base Prospectus.</AdditionalSellingRestrictions>
+			<ManufacturerTargetMarket>UK_MIFIR_PROF_AND_ECPS</ManufacturerTargetMarket>
+			<CallPutOption>ISSUER_CALL</CallPutOption>
+			<OptionalRedemption>
+			<OptionalRedemptionDate>
+				<StartDate>
+					<Date>2027-08-30</Date>
+				</StartDate>
+				<EndDate>
+					<ReferenceDate>First Reset Date</ReferenceDate>
+				</EndDate>
+			</OptionalRedemptionDate>
+			<OptionalRedemptionAmount>
+				
+				<Amount>100</Amount>
+				<AmountType>PRICE_PERCENT</AmountType>
+			</OptionalRedemptionAmount>
+			</OptionalRedemption>
+		</Issuance>
+		<Product>
+			<SecurityIdentifierList>
+				<SecurityIdentifier>
+					<ISIN>XS2524143554</ISIN>
+					<IdentifierType>ISIN</IdentifierType>
+				</SecurityIdentifier>
+				<SecurityIdentifier>
+					<DTI>1B9BDHNPC</DTI>
+					<IdentifierType>DTI</IdentifierType>
+				</SecurityIdentifier>
+			</SecurityIdentifierList>
+			<FormOfNote>BEARER</FormOfNote>
+			<StatusOfNote>SUBORDINATED</StatusOfNote>
+			<AggregateNominalAmount>75000000</AggregateNominalAmount>
+			<ExpectedProductRating>
+				<Rating>
+					<RatingAgency>FITCH</RatingAgency>
+					<RatingValue>A-</RatingValue>
+				</Rating>
+				<Rating>
+					<RatingAgency>SP</RatingAgency>
+					<RatingValue>BBB+</RatingValue>
+				</Rating>
+				<Rating>
+					<RatingAgency>MOODYS</RatingAgency>
+					<RatingValue>Baa1</RatingValue>
+				</Rating>
+			</ExpectedProductRating>
+			<MaturityDate>2032-11-30</MaturityDate>
+			<InterestPayment>
+				<InterestType>FIXED</InterestType>
+				<InterestRate>3.875</InterestRate>
+				<InterestCommencementDate>2022-08-22</InterestCommencementDate>
+				<InterestPayments>
+					<InterestPaymentFrequency>ANNUALLY</InterestPaymentFrequency>
+					<PayableDate>
+						<Day>30</Day>
+						<Month>11</Month>
+					</PayableDate>
+					<FirstPayment>
+						<PaymentDate>2022-11-30</PaymentDate>
+						<BrokenDateType>SHORT</BrokenDateType>
+					</FirstPayment>
+				</InterestPayments>
+			</InterestPayment>
+			<DayCountFraction>ICMA_ACT/ACT</DayCountFraction>
+			<BusinessDayConvention>FOLLOWING_UNADJUSTED</BusinessDayConvention>
+			<BusinessDayCenter>TARGET</BusinessDayCenter>
+			<DLTBondIndicator>true</DLTBondIndicator>
+		</Product>
+	</ICMABondDataTaxonomy>
+</Document>
