@@ -98,17 +98,23 @@ FpML `notionalStepSchedule` is the design reference. ACTUS is noted for future a
 
 ## Test Fixtures
 
-Fixtures live in `data/PDF/` (git-ignored). Tag each with features it exercises.
+Fixtures live in `data/PDF/` (git-ignored). Full details and feature coverage map in README.MD.
 
-| File | Features |
-|------|----------|
-| `REPUBLIC OF ARGENTINA Form 424B5 Filed 2020-08-17.pdf` | Amortizing, multi-bond, dual ISIN (144A + Reg S), New York law, DTCC, STANDALONE |
-| `Prospectus - 2021.pdf` | TBD |
-| `us_prospectus_and_prospectus_supplement.pdf` | TBD |
+| File | Issuer | Bonds | Key features |
+|------|--------|-------|-------------|
+| `REPUBLIC OF ARGENTINA Form 424B5 Filed 2020-08-17.pdf` | Argentina (sovereign) | Multi | Amortizing, step-up, dual ISIN, SEC EDGAR |
+| `Prospectus - 2021.pdf` | Province of Buenos Aires | 6 series | Amortizing, step-up coupon, dual currency USD+EUR, dual ISIN, LuxSE |
+| `us_prospectus_and_prospectus_supplement.pdf` | Argentina (sovereign) | 4 types | GDP-linked, $81.8B 2005 restructuring |
+| `PDVSA_XS0294364103.pdf` | PDVSA (Venezuela) | 3 series | Guaranteed, LuxSE, no BDT GoverningLaw match |
+| `USG38327AB13_OC_EN_2.PDF` | GeoPark (Bermuda) | 1 (tap) | Single bond, tap issuance, simplest structure |
+| `USL21779AD28_OC_EN_3.pdf` | CSN Resources (Luxembourg/Brazil) | 2 series | Guaranteed, tap, multi-bond |
+| `USP3710FAU86_OC_EN.PDF` | EDENOR (Argentina utility) | 1 | Amortizing 3 installments, dual ISIN |
+| `USP98047AC08_PR_EN.pdf` | Volcan (Peru mining) | 1 | Listing memorandum format, guaranteed |
+| `XS2278474924_OC_EN_2.pdf` | Liquid Telecom (England/Africa) | 1 | Senior secured, English law, 622 pages |
 
-**Primary:** Argentina 2020 — amortizing sovereign bond restructuring with multiple new series, each having a 144A and Reg S ISIN. Target section: "Description of the New Securities" (or similar). Exercises: amortization extension, multi-bond detection, dual-ISIN logic, standard BDT fields.
+**Simplest fixture to start with:** `USG38327AB13_OC_EN_2.PDF` (GeoPark) — single bond, fixed rate bullet, New York law, no amortization, 191 pages.
 
-When adding a new fixture: add a row above, add a pytest parametrize entry, prefer documents that cover uncovered features (vanilla fixed-rate, floating-rate, programme issuance).
+When adding a new fixture: add a row above + a row to the README fixture table, add a pytest parametrize entry.
 
 ## API Contract (async REST)
 

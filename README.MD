@@ -375,29 +375,46 @@ Test fixtures are real prospectus PDFs stored in `data/PDF/` (git-ignored). Each
 
 ### Current fixtures
 
-| File | Issuer | Features tested |
-|------|--------|----------------|
-| `REPUBLIC OF ARGENTINA Form 424B5 Filed 2020-08-17.pdf` | Argentina (sovereign) | Amortizing, dual ISIN (144A + Reg S), multi-bond (multiple new series), New York law, DTCC, STANDALONE |
-| `Prospectus - 2021.pdf` | TBD | TBD |
-| `us_prospectus_and_prospectus_supplement.pdf` | TBD | TBD |
+| File | Pages | Issuer | Country | Bonds | Type | Currency | Maturity | Governing law | Source | Key features |
+|------|-------|--------|---------|-------|------|----------|----------|---------------|--------|--------------|
+| `REPUBLIC OF ARGENTINA Form 424B5 Filed 2020-08-17.pdf` | 221 | Republic of Argentina (sovereign) | Argentina | Multiple new series (2030, 2035, 2038…) | Fixed, amortizing, step-up | USD + EUR | 2029–2038 | New York | SEC EDGAR 424B5 | Multi-bond, amortizing, dual ISIN (144A + Reg S), exchange offer |
+| `Prospectus - 2021.pdf` | 289 | Province of Buenos Aires | Argentina (sub-sovereign) | 6 series (USD A/B/C + EUR A/B/C, all due 2037) | Fixed step-up, amortizing | USD + EUR | 2037 | New York | LuxSE listing particulars | Multi-bond (6), amortizing (19–28 installments), step-up coupon, dual ISIN, dual currency, LEI: 549300L6AYROPOTQ4L07 |
+| `us_prospectus_and_prospectus_supplement.pdf` | 374 | Republic of Argentina (sovereign) | Argentina | 4 types: Pars 2038, Discounts 2033, Quasi-Pars 2045, GDP-linked 2035 | Mixed + GDP-linked | USD | 2033–2045 | New York + Argentine | SEC EDGAR | Multi-bond (4), GDP-linked security, $81.8B exchange (2005 default restructuring) |
+| `PDVSA_XS0294364103.pdf` | 220 | Petróleos de Venezuela S.A. (PDVSA) | Venezuela | 3 series: $3B 2017, $3B 2027, $1.5B 2037 | Fixed, bullet | USD | 2017/2027/2037 | New York | LuxSE | Multi-bond (3), guaranteed (PDVSA Petróleo), ISIN: XS0294364103, Venezuelan issuer (no BDT governing law match) |
+| `USG38327AB13_OC_EN_2.PDF` | 191 | GeoPark Limited | Bermuda (LatAm operations) | 1 ($150M tap of $350M existing) | Fixed, bullet | USD | 2027 | New York | Private OM (144A / Reg S) | Single bond, tap issuance, CUSIP: G38327AB13, coupon 5.500% |
+| `USL21779AD28_OC_EN_3.pdf` | 78 | CSN Resources S.A. (guaranteed by CSN Brazil) | Luxembourg / Brazil | 2 series: $600M 2026 + $400M 2023 tap | Fixed, bullet | USD | 2023/2026 | New York | Private OM (144A / Reg S) | Multi-bond (2), one is a tap, guaranteed, Luxembourg issuer, coupon 7.625% |
+| `USP3710FAU86_OC_EN.PDF` | 154 | EDENOR S.A. (Argentine electricity utility) | Argentina | 1 ($135M) | Fixed, **amortizing** (3 installments) | USD | 2030 | New York | Private OM (144A / Reg S) | Amortizing (33%/33%/34% in Oct 2028/2029/2030), dual ISIN (Reg S: USP3710FAU86 / 144A: US29244AAM45), coupon 9.75% |
+| `USP98047AC08_PR_EN.pdf` | 333 | Volcan Compañía Minera (Peruvian mining, Chungar guarantor) | Peru | 1 ($475M) | Fixed, bullet | USD | 2026 | New York | Listing memorandum | Single bond, guaranteed by subsidiaries, listing memorandum format, coupon 4.375%, ISIN: USP98047AC08 |
+| `XS2278474924_OC_EN_2.pdf` | 622 | Liquid Telecommunications Financing plc | England & Wales / Africa | 1 ($620M) | Fixed, bullet, **senior secured** | USD | 2026 | English | Private OM (144A / Reg S) | Senior secured (unique in set), English law, African telecoms, largest doc (622 pages), ISIN: XS2278474924, coupon 5.5% |
 
-### Primary fixture: Argentina 2020 restructuring
+### Feature coverage map
 
-**Why this document:** The Argentina 2020 sovereign bond restructuring is an unusually rich test case:
-- **Amortizing** — principal repaid in tranches: exercises the amortization extension
-- **Multi-bond** — the exchange offer produced several new bond series with different maturities/coupons: exercises Stage 4's multi-section detection
-- **Dual ISIN per bond** — each series has a 144A ISIN (DTCC) and a Reg S ISIN (Euroclear/Clearstream): exercises the dual-ISIN identity logic
-- **New York law** — maps to `NEW_YORK_LAW` in BDT ✓
-- **STANDALONE** issuance — simpler than a programme for MVP
-- Target section: "Description of the New Securities" or "Terms and Conditions of the New Securities"
+| Feature | Covered by |
+|---------|-----------|
+| Amortizing bonds | Argentina 2020, Buenos Aires Province 2021, EDENOR |
+| Step-up coupon | Argentina 2020, Buenos Aires Province 2021 |
+| Multi-bond prospectus | Argentina 2020, Buenos Aires Province 2021, Argentina 2005, PDVSA, CSN |
+| Dual ISIN (144A + Reg S) | Argentina 2020, Buenos Aires Province 2021, EDENOR, GeoPark, CSN |
+| Dual currency (USD + EUR) | Argentina 2020, Buenos Aires Province 2021 |
+| GDP-linked security | Argentina 2005 |
+| Guaranteed notes | PDVSA, CSN, Liquid Telecom, Volcan |
+| Senior secured | Liquid Telecom |
+| Tap issuance (fungible reopening) | GeoPark, CSN 2023 notes |
+| English law | Liquid Telecom |
+| New York law | All others |
+| BDT governing law gap (no Venezuelan/Argentinian law) | PDVSA, EDENOR |
+| Very large document (>300 pages) | Liquid Telecom (622), Argentina 2005 (374), Volcan (333) |
+| Listing memorandum format | Volcan (USP98047AC08) |
+| Sub-sovereign issuer | Buenos Aires Province 2021 |
+| Vanilla single fixed-rate bullet (simplest case) | GeoPark, Liquid Telecom |
 
 ### Adding new fixtures
 
-When adding a new PDF for testing:
+When adding a new PDF:
 1. Place it in `data/PDF/` (git-ignored)
-2. Add a row to the table above with issuer and feature tags
+2. Add a row to both tables above
 3. Add a pytest parametrize entry in the relevant test file
-4. Prefer documents that exercise features not already covered (vanilla fixed-rate, floating-rate, programme issuance, non-English governing law, etc.)
+4. Gaps still worth covering: programme/EMTN issuance, floating rate, non-English/non-NY governing law (French, German)
 
 ---
 
