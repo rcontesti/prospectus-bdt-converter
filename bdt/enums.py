@@ -176,8 +176,18 @@ FIELD_GROUPS = {
     "amounts": {
         "description": "Principal amounts and denomination",
         "fields": {
-            "aggregate_nominal_amount": "Total face value of the issue (numeric, no symbols)",
-            "specified_denomination": "Minimum denomination per note (numeric)",
+            "aggregate_nominal_amount": (  # noqa: E501
+                "Aggregate principal amount of the SPECIFIC TRANCHE/OFFERING being issued"
+                " (not the total outstanding after this offering, not the programme limit)."
+                " Look for 'will issue $X aggregate principal amount of [the/these/New] Notes"
+                " in this offering' or 'the Notes offered hereby'. Numeric, no currency symbols."
+            ),
+            "specified_denomination": (  # noqa: E501
+                "Minimum denomination per individual note (numeric)."
+                " Look for 'minimum denomination', 'authorised denomination',"
+                " 'Denominations of $X'. Do NOT use the minimum wire transfer amount"
+                " or minimum trading/transfer amount. Typical values: 200000, 100000, 1000."
+            ),
             "integral_multiples": "Integral multiples above denomination (numeric), or null",
             "specified_currency": "ISO 4217 currency code (e.g. USD, EUR)",
         },
@@ -185,11 +195,15 @@ FIELD_GROUPS = {
     "dates": {
         "description": "Key dates",
         "fields": {
-            "pricing_date": "Trade/pricing date (YYYY-MM-DD)",
-            "issue_date": "Issue/settlement date (YYYY-MM-DD)",
+            "pricing_date": (  # noqa: E501
+                "Pricing/trade date when terms were set (YYYY-MM-DD)."
+                " Often labelled 'Pricing Date' or 'Trade Date' and appears on the cover page."
+                " If not explicitly stated, return null."
+            ),
+            "issue_date": "Issue date (YYYY-MM-DD). Also called 'Settlement Date' or 'Closing Date'.",  # noqa: E501
             "settlement_date": "Settlement date if different from issue date (YYYY-MM-DD), else same as issue_date",  # noqa: E501
             "maturity_date": "Final maturity date (YYYY-MM-DD)",
-            "interest_commencement_date": "Date from which interest accrues (YYYY-MM-DD)",
+            "interest_commencement_date": "Date from which interest starts accruing (YYYY-MM-DD). Often same as issue date.",  # noqa: E501
         },
     },
     "interest": {
@@ -198,7 +212,12 @@ FIELD_GROUPS = {
             "interest_type": f"One of: {INTEREST_TYPE}",
             "interest_rate": "Annual interest rate as decimal (e.g. 0.055 for 5.5%), or null if not fixed",  # noqa: E501
             "interest_payment_frequency": f"One of: {INTEREST_PAYMENT_FREQUENCY}",
-            "day_count_fraction": f"One of: {DAY_COUNT_FRACTION}",
+            "day_count_fraction": (  # noqa: E501
+                f"One of: {DAY_COUNT_FRACTION}."
+                " '360-day year of twelve 30-day months' → '30/360' (most common for USD fixed-rate)."  # noqa: E501
+                " 'actual/360' → 'ACT/360' (money market, floating rate)."
+                " 'actual/actual' → 'ICMA_ACT/ACT' (EUR bonds) or 'ISDA_ACT/ACT'."
+            ),
             "business_day_convention": f"One of: {BUSINESS_DAY_CONVENTION}",
             "business_day_center": f"One of: {BUSINESS_DAY_CENTER}. Use NEW_YORK for USD bonds if exact center not listed.",  # noqa: E501
             "first_interest_payment_date": "Date of first coupon payment (YYYY-MM-DD)",
@@ -208,7 +227,11 @@ FIELD_GROUPS = {
         "description": "Issuance terms",
         "fields": {
             "issuance_type": f"One of: {ISSUANCE_TYPE}. Use STANDALONE unless document references a programme/MTN.",  # noqa: E501
-            "issue_price": "Issue price as percentage of par (e.g. 100.0 for par, 98.5 for discount)",  # noqa: E501
+            "issue_price": (  # noqa: E501
+                "Issue price as a percentage of par (numeric, e.g. 100.0 for par, 101.875 for premium,"  # noqa: E501
+                " 98.5 for discount). Often labelled 'Issue Price:' or 'Offering Price:' on the cover page."  # noqa: E501
+                " Return a number, not a string with '%'."
+            ),
             "form_of_note": f"One of: {FORM_OF_NOTE}",
             "status_of_note": f"One of: {STATUS_OF_NOTE}",
             "governing_law": f"One of: {GOVERNING_LAW}. Use NEW_YORK_LAW for EM bonds if exact law not listed.",  # noqa: E501
@@ -230,7 +253,14 @@ FIELD_GROUPS = {
     "restrictions": {
         "description": "Selling restrictions",
         "fields": {
-            "selling_restrictions": f"List of applicable codes from: {SELLING_RESTRICTION_CODE}",
+            "selling_restrictions": (  # noqa: E501
+                f"List of applicable codes from: {SELLING_RESTRICTION_CODE}."
+                " Rule 144A → '144A'. Regulation S Category 2 → 'REGS_CAT2'."
+                " Regulation S Category 1 → 'REGS_CAT1'. TEFRA D → 'TEFRA_D'. TEFRA C → 'TEFRA_C'."
+                " Look for 'Rule 144A', 'Regulation S', 'TEFRA D' anywhere in the text."
+                " Most EM dollar bonds: ['144A', 'REGS_CAT2', 'TEFRA_D']."
+                " If none found: ['NOT_APPLICABLE']."
+            ),
             "priips_restriction": "true if PRIIPs KID restriction applies (EU retail), false otherwise",  # noqa: E501
         },
     },

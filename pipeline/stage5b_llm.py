@@ -85,11 +85,20 @@ def _build_system_prompt(anchor: BondAnchor) -> str:
     )
 
 
+# Groups that benefit from cover/front-matter context (pricing date, issue price,
+# selling restrictions are often stated on the cover page, not in the bond section body).
+_GROUPS_NEEDING_COVER = {"dates", "issuance", "restrictions", "identifiers"}
+
+# Characters from full_doc_fallback_text to include as cover-page context.
+_COVER_CONTEXT_CHARS = 3000
+
+
 def _build_group_prompt(
     group_name: str,
     group_def: dict,
     table_text: str,
     anchor: BondAnchor,
+    cover_text: str | None = None,
 ) -> str:
     """Build the user prompt for a single field group."""
     fields_desc = "\n".join(f'  - "{k}": {v}' for k, v in group_def["fields"].items())
@@ -98,12 +107,17 @@ def _build_group_prompt(
     if anchor.isins:
         isin_ref = f" for the bond with ISIN {anchor.isins[0]}"
 
+    cover_section = ""
+    if cover_text:
+        cover_section = f"\n\n--- COVER / FRONT-MATTER (additional context) ---\n{cover_text}"
+
     return (
         f"Extract the following {group_def['description']}{isin_ref} "
         f"from the bond prospectus text below.\n\n"
         f"Fields to extract:\n{fields_desc}\n\n"
         f"Return a JSON object with exactly these keys.\n\n"
-        f"--- PROSPECTUS TEXT ---\n{table_text}"
+        f"--- BOND SECTION TEXT ---\n{table_text}"
+        f"{cover_section}"
     )
 
 
@@ -155,10 +169,18 @@ def extract_fields(
     system_prompt = _build_system_prompt(anchor)
     text = table_result.table_text
 
+    # Cover / front-matter context: first N chars of the full document.
+    # Supplied only to groups where cover-page fields are commonly found
+    # (pricing date, issue price, selling restrictions, ISINs).
+    cover_text: str | None = None
+    if table_result.full_doc_fallback_text:
+        cover_text = table_result.full_doc_fallback_text[:_COVER_CONTEXT_CHARS]
+
     # Extract standard groups
     for group_name, group_def in FIELD_GROUPS.items():
         try:
-            user_prompt = _build_group_prompt(group_name, group_def, text, anchor)
+            group_cover = cover_text if group_name in _GROUPS_NEEDING_COVER else None
+            user_prompt = _build_group_prompt(group_name, group_def, text, anchor, group_cover)
             fields = backend.complete(system_prompt, user_prompt)
             result.groups[group_name] = GroupExtractionResult(
                 group_name=group_name,
@@ -177,7 +199,9 @@ def extract_fields(
     issuance_group = result.groups.get("issuance")
     if _should_extract_amortization(text, issuance_group):
         try:
-            user_prompt = _build_group_prompt("amortization", AMORTIZATION_FIELDS, text, anchor)
+            user_prompt = _build_group_prompt(  # noqa: E501
+                "amortization", AMORTIZATION_FIELDS, text, anchor, None
+            )
             fields = backend.complete(system_prompt, user_prompt)
             result.groups["amortization"] = GroupExtractionResult(
                 group_name="amortization",
