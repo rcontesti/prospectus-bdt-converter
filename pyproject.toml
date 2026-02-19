@@ -5,6 +5,7 @@ requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+timeout = 600
 markers = [
     "requires_pdf: test needs PDF fixtures in data/PDF/",
     "requires_ollama: test needs running Ollama instance",

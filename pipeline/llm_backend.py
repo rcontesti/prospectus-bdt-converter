@@ -76,9 +76,11 @@ class OllamaBackend:
     """
     Ollama local inference backend.
 
-    Calls /api/generate with JSON mode enforced (``format: json``), which
+    Calls /api/chat with JSON mode enforced (``format: json``), which
     constrains the model to emit only valid JSON tokens.  Works with any model
-    served by Ollama: Qwen2.5, Phi-3.5-mini, Mistral, Llama 3, etc.
+    served by Ollama: Qwen3-VL, Qwen2.5, Phi-3.5-mini, Mistral, Llama 3, etc.
+    Thinking/reasoning models (Qwen3, QwQ, DeepSeek-R1) are handled correctly:
+    chain-of-thought stays in message.thinking; message.content has clean JSON.
 
     Connection metadata:
         base_url    HTTP address of the running Ollama instance.
@@ -90,13 +92,20 @@ class OllamaBackend:
 
     base_url: str = "http://localhost:11434"
     model: str = "qwen3-vl:8b"
-    timeout: float = 120.0
+    timeout: float = 600.0
     temperature: float = 0.0
     num_ctx: int = 8192
 
     def complete(self, system_prompt: str, user_prompt: str) -> dict:
         """
-        Call Ollama's /api/generate endpoint with JSON mode enforced.
+        Call Ollama's /api/chat endpoint with JSON mode enforced.
+
+        Uses /api/chat (not /api/generate) so that thinking/reasoning models
+        such as Qwen3 route their chain-of-thought into message.thinking and
+        keep message.content clean for the actual JSON answer.
+        ``think: false`` suppresses chain-of-thought tokens entirely, which
+        speeds up extraction and avoids wasting context on reasoning traces
+        for this deterministic task.
 
         Args:
             system_prompt: Role and instruction context.
@@ -110,17 +119,20 @@ class OllamaBackend:
         """
         payload = {
             "model": self.model,
-            "prompt": user_prompt,
-            "system": system_prompt,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
             "format": "json",
             "stream": False,
+            "think": False,
             "options": {
                 "temperature": self.temperature,
                 "num_ctx": self.num_ctx,
             },
         }
 
-        url = f"{self.base_url}/api/generate"
+        url = f"{self.base_url}/api/chat"
 
         try:
             response = httpx.post(url, json=payload, timeout=self.timeout)
@@ -133,9 +145,14 @@ class OllamaBackend:
             raise RuntimeError(
                 f"Cannot connect to Ollama at {self.base_url}. Is it running?"
             ) from exc
+        except httpx.TimeoutException as exc:
+            raise RuntimeError(
+                f"Ollama request timed out after {self.timeout}s. "
+                f"Try increasing OLLAMA_TIMEOUT in .env."
+            ) from exc
 
         data = response.json()
-        raw_text = data.get("response", "")
+        raw_text = data.get("message", {}).get("content", "")
 
         try:
             return json.loads(raw_text)

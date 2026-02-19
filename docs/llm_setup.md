@@ -84,7 +84,7 @@ the only ones you need.
 |---|---|---|
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | URL of the Ollama instance |
 | `OLLAMA_MODEL` | `qwen3-vl:8b` | Model tag (must match `ollama list`) |
-| `OLLAMA_TIMEOUT` | `120.0` | Per-request timeout in seconds |
+| `OLLAMA_TIMEOUT` | `600.0` | Per-request timeout in seconds |
 | `OLLAMA_NUM_CTX` | `8192` | Context window in tokens |
 | `OLLAMA_TEMPERATURE` | `0.0` | Sampling temperature (0 = deterministic) |
 

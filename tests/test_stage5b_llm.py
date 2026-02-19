@@ -115,7 +115,8 @@ class TestOllamaIntegration:
         from pipeline.stage5b_llm import extract_fields
 
         anchor = extract_anchor(geopark_table)
-        backend = OllamaBackend()  # default localhost:11434
+        from pipeline.settings import default_ollama_backend
+        backend = default_ollama_backend()  # reads OLLAMA_* from .env
         result = extract_fields(geopark_table, anchor, backend)
         assert "identifiers" in result.groups
         assert len(result.groups["identifiers"].fields) > 0
