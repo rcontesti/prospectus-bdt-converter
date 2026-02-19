@@ -16,7 +16,7 @@ import logging
 from dataclasses import dataclass, field
 
 from bdt.enums import AMORTIZATION_FIELDS, FIELD_GROUPS
-from pipeline.llm_backend import LLMBackend, OllamaBackend
+from pipeline.llm_backend import LLMBackend
 from pipeline.stage4_table import TableDetectionResult
 from pipeline.stage5a_anchor import BondAnchor
 
@@ -92,9 +92,7 @@ def _build_group_prompt(
     anchor: BondAnchor,
 ) -> str:
     """Build the user prompt for a single field group."""
-    fields_desc = "\n".join(
-        f'  - "{k}": {v}' for k, v in group_def["fields"].items()
-    )
+    fields_desc = "\n".join(f'  - "{k}": {v}' for k, v in group_def["fields"].items())
 
     isin_ref = ""
     if anchor.isins:
@@ -179,9 +177,7 @@ def extract_fields(
     issuance_group = result.groups.get("issuance")
     if _should_extract_amortization(text, issuance_group):
         try:
-            user_prompt = _build_group_prompt(
-                "amortization", AMORTIZATION_FIELDS, text, anchor
-            )
+            user_prompt = _build_group_prompt("amortization", AMORTIZATION_FIELDS, text, anchor)
             fields = backend.complete(system_prompt, user_prompt)
             result.groups["amortization"] = GroupExtractionResult(
                 group_name="amortization",

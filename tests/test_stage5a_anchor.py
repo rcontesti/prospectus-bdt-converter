@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from pipeline.stage5a_anchor import BondAnchor, _isin_checksum_valid, extract_anchor
+from pipeline.stage5a_anchor import _isin_checksum_valid, extract_anchor
 from tests.conftest import requires_pdf
-
 
 # ---------------------------------------------------------------------------
 # ISIN checksum unit tests

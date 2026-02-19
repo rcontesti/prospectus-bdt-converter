@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.conftest import PDF_PATHS, requires_pdf
+from tests.conftest import requires_pdf
 
 
 class TestParseGeoPark:

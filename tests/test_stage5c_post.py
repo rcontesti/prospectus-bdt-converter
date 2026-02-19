@@ -7,11 +7,10 @@ from __future__ import annotations
 
 import pytest
 
+from bdt.enums import GOVERNING_LAW, INTEREST_TYPE
 from pipeline.stage5a_anchor import BondAnchor
 from pipeline.stage5b_llm import GroupExtractionResult, RawExtractionResult
 from pipeline.stage5c_post import (
-    ExtractionResult,
-    ValidationWarning,
     derive_target_market,
     normalize_amount,
     normalize_date,
@@ -19,8 +18,6 @@ from pipeline.stage5c_post import (
     validate_enum,
     validate_isin,
 )
-from bdt.enums import GOVERNING_LAW, INTEREST_TYPE
-
 
 # ---------------------------------------------------------------------------
 # Date normalization
@@ -187,39 +184,41 @@ class TestPostProcess:
         return RawExtractionResult(anchor=anchor, groups=groups)
 
     def test_full_valid_result(self):
-        raw = self._make_raw_result({
-            "identifiers": {"isin": "US0378331005"},
-            "amounts": {
-                "aggregate_nominal_amount": "500,000,000",
-                "specified_denomination": "200000",
-                "specified_currency": "USD",
-            },
-            "dates": {
-                "pricing_date": "January 15, 2020",
-                "issue_date": "January 17, 2020",
-                "settlement_date": "January 17, 2020",
-                "maturity_date": "September 21, 2027",
-                "interest_commencement_date": "January 17, 2020",
-            },
-            "interest": {
-                "interest_type": "FIXED",
-                "interest_rate": "0.055",
-                "interest_payment_frequency": "SEMIANNUALLY",
-                "day_count_fraction": "30/360",
-                "business_day_convention": "FOLLOWING_UNADJUSTED",
-                "business_day_center": "NEW_YORK",
-            },
-            "issuance": {
-                "issuance_type": "STANDALONE",
-                "issue_price": "100.0",
-                "form_of_note": "REGISTERED",
-                "status_of_note": "SENIOR_UNSECURED",
-                "governing_law": "NEW_YORK_LAW",
-            },
-            "restrictions": {
-                "selling_restrictions": ["144A", "REGS_CAT2"],
-            },
-        })
+        raw = self._make_raw_result(
+            {
+                "identifiers": {"isin": "US0378331005"},
+                "amounts": {
+                    "aggregate_nominal_amount": "500,000,000",
+                    "specified_denomination": "200000",
+                    "specified_currency": "USD",
+                },
+                "dates": {
+                    "pricing_date": "January 15, 2020",
+                    "issue_date": "January 17, 2020",
+                    "settlement_date": "January 17, 2020",
+                    "maturity_date": "September 21, 2027",
+                    "interest_commencement_date": "January 17, 2020",
+                },
+                "interest": {
+                    "interest_type": "FIXED",
+                    "interest_rate": "0.055",
+                    "interest_payment_frequency": "SEMIANNUALLY",
+                    "day_count_fraction": "30/360",
+                    "business_day_convention": "FOLLOWING_UNADJUSTED",
+                    "business_day_center": "NEW_YORK",
+                },
+                "issuance": {
+                    "issuance_type": "STANDALONE",
+                    "issue_price": "100.0",
+                    "form_of_note": "REGISTERED",
+                    "status_of_note": "SENIOR_UNSECURED",
+                    "governing_law": "NEW_YORK_LAW",
+                },
+                "restrictions": {
+                    "selling_restrictions": ["144A", "REGS_CAT2"],
+                },
+            }
+        )
         result = post_process(raw)
         assert result.status == "done_valid"
         assert result.fields["maturity_date"] == "2027-09-21"
@@ -227,18 +226,22 @@ class TestPostProcess:
         assert result.fields["interest_type"] == "FIXED"
 
     def test_missing_required_fields_partial(self):
-        raw = self._make_raw_result({
-            "identifiers": {"isin": "US0378331005"},
-            "amounts": {"specified_currency": "USD"},
-        })
+        raw = self._make_raw_result(
+            {
+                "identifiers": {"isin": "US0378331005"},
+                "amounts": {"specified_currency": "USD"},
+            }
+        )
         result = post_process(raw)
         assert result.status == "done_partial"
         assert any(w.field_name == "__required__" for w in result.warnings)
 
     def test_invalid_enum_produces_warning(self):
-        raw = self._make_raw_result({
-            "interest": {"interest_type": "NONSENSE_VALUE"},
-        })
+        raw = self._make_raw_result(
+            {
+                "interest": {"interest_type": "NONSENSE_VALUE"},
+            }
+        )
         result = post_process(raw)
         assert result.fields["interest_type"] is None
         assert any(
@@ -247,20 +250,24 @@ class TestPostProcess:
         )
 
     def test_date_normalization_in_pipeline(self):
-        raw = self._make_raw_result({
-            "dates": {"maturity_date": "September 21, 2027"},
-        })
+        raw = self._make_raw_result(
+            {
+                "dates": {"maturity_date": "September 21, 2027"},
+            }
+        )
         result = post_process(raw)
         assert result.fields["maturity_date"] == "2027-09-21"
 
     def test_parties_extracted(self):
-        raw = self._make_raw_result({
-            "parties": {
-                "issuer_name": "GeoPark Limited",
-                "lead_managers": ["J.P. Morgan", "Morgan Stanley"],
-                "trustee": "The Bank of New York Mellon",
-            },
-        })
+        raw = self._make_raw_result(
+            {
+                "parties": {
+                    "issuer_name": "GeoPark Limited",
+                    "lead_managers": ["J.P. Morgan", "Morgan Stanley"],
+                    "trustee": "The Bank of New York Mellon",
+                },
+            }
+        )
         result = post_process(raw)
         assert len(result.parties) == 4  # issuer + 2 managers + trustee
         roles = [p.role for p in result.parties]
@@ -268,8 +275,10 @@ class TestPostProcess:
         assert "TRUSTEE" in roles
 
     def test_target_market_derived(self):
-        raw = self._make_raw_result({
-            "restrictions": {"selling_restrictions": ["144A", "REGS_CAT2"]},
-        })
+        raw = self._make_raw_result(
+            {
+                "restrictions": {"selling_restrictions": ["144A", "REGS_CAT2"]},
+            }
+        )
         result = post_process(raw)
         assert result.manufacturer_target_market == ["NOT_APPLICABLE"]

@@ -6,19 +6,15 @@ Integration tests with Ollama are skipped via requires_ollama marker.
 
 from __future__ import annotations
 
-import pytest
-
-from pipeline.llm_backend import OllamaBackend
+from bdt.enums import FIELD_GROUPS
 from pipeline.stage5a_anchor import BondAnchor
 from pipeline.stage5b_llm import (
+    GroupExtractionResult,
     _build_group_prompt,
     _build_system_prompt,
     _should_extract_amortization,
-    GroupExtractionResult,
 )
-from bdt.enums import FIELD_GROUPS
 from tests.conftest import requires_ollama, requires_pdf
-
 
 # ---------------------------------------------------------------------------
 # Prompt construction unit tests (no LLM needed)
@@ -116,6 +112,7 @@ class TestOllamaIntegration:
 
         anchor = extract_anchor(geopark_table)
         from pipeline.settings import default_ollama_backend
+
         backend = default_ollama_backend()  # reads OLLAMA_* from .env
         result = extract_fields(geopark_table, anchor, backend)
         assert "identifiers" in result.groups

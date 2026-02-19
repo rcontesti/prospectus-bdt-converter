@@ -24,7 +24,6 @@ from dataclasses import dataclass
 
 from pipeline.stage3_find import BondSection
 
-
 # ---------------------------------------------------------------------------
 # BDT keyword signals — lines containing these are likely part of a terms table
 # ---------------------------------------------------------------------------
@@ -83,10 +82,11 @@ _MAX_GAP_LINES = 6
 @dataclass
 class TableDetectionResult:
     """Result of Stage 4."""
+
     section_title: str
-    table_text: str          # compact key terms block (primary LLM input)
-    full_section_text: str   # always provided as fallback
-    table_found: bool        # False if we fell back to full section text
+    table_text: str  # compact key terms block (primary LLM input)
+    full_section_text: str  # always provided as fallback
+    table_found: bool  # False if we fell back to full section text
     table_char_count: int
     section_char_count: int
 
@@ -199,7 +199,7 @@ def detect_summary_table(section: BondSection) -> TableDetectionResult:
         # Extend end_idx: include a few more lines past the keyword region
         # (to capture values that appear on the line after the label)
         end_idx = min(end_idx + 3, len(lines) - 1)
-        table_lines = lines[start_idx:end_idx + 1]
+        table_lines = lines[start_idx : end_idx + 1]
         table_text = "\n".join(table_lines).strip()
 
         return TableDetectionResult(

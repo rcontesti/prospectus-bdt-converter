@@ -15,8 +15,8 @@ import logging
 
 from pipeline.llm_backend import LLMBackend
 from pipeline.stage4_table import TableDetectionResult
-from pipeline.stage5a_anchor import BondAnchor, extract_anchor
-from pipeline.stage5b_llm import RawExtractionResult, extract_fields
+from pipeline.stage5a_anchor import extract_anchor
+from pipeline.stage5b_llm import extract_fields
 from pipeline.stage5c_post import ExtractionResult, post_process
 
 logger = logging.getLogger(__name__)

@@ -157,6 +157,4 @@ class OllamaBackend:
         try:
             return json.loads(raw_text)
         except json.JSONDecodeError as exc:
-            raise RuntimeError(
-                f"Ollama returned invalid JSON: {raw_text[:500]}"
-            ) from exc
+            raise RuntimeError(f"Ollama returned invalid JSON: {raw_text[:500]}") from exc
