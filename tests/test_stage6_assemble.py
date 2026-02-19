@@ -224,6 +224,75 @@ class TestAssembleStructure:
 
 
 # ---------------------------------------------------------------------------
+# Unit tests: XSD sequence suppression
+# ---------------------------------------------------------------------------
+
+
+class TestSequenceSuppression:
+    """Verify that missing anchor fields suppress downstream elements instead of
+    emitting them out-of-order (which produces misleading XSD sequence errors)."""
+
+    def test_missing_issuance_type_suppresses_listing(self):
+        fields = dict(_GEOPARK_FIELDS)
+        del fields["issuance_type"]
+        result = assemble(_make_result(fields=fields, status="done_partial"))
+        root = etree.fromstring(result.xml_bytes.split(b"<!--")[0])
+        assert root.find(f".//{{{BDT_NS}}}Listing") is None
+
+    def test_missing_issuance_type_suppresses_selling_restrictions(self):
+        fields = dict(_GEOPARK_FIELDS)
+        del fields["issuance_type"]
+        result = assemble(_make_result(fields=fields, status="done_partial"))
+        root = etree.fromstring(result.xml_bytes.split(b"<!--")[0])
+        assert root.find(f".//{{{BDT_NS}}}SellingRestrictions") is None
+
+    def test_missing_issuance_type_suppresses_manufacturer_target_market(self):
+        fields = dict(_GEOPARK_FIELDS)
+        del fields["issuance_type"]
+        result = assemble(_make_result(fields=fields, status="done_partial"))
+        root = etree.fromstring(result.xml_bytes.split(b"<!--")[0])
+        assert root.find(f".//{{{BDT_NS}}}ManufacturerTargetMarket") is None
+
+    def test_missing_issuance_type_adds_suppression_warning(self):
+        fields = dict(_GEOPARK_FIELDS)
+        del fields["issuance_type"]
+        result = assemble(_make_result(fields=fields, status="done_partial"))
+        assert any("IssuanceType missing" in w for w in result.warnings)
+
+    def test_missing_form_of_note_suppresses_interest_payment(self):
+        fields = dict(_GEOPARK_FIELDS)
+        del fields["form_of_note"]
+        result = assemble(_make_result(fields=fields, status="done_partial"))
+        root = etree.fromstring(result.xml_bytes.split(b"<!--")[0])
+        assert root.find(f".//{{{BDT_NS}}}InterestPayment") is None
+
+    def test_missing_form_of_note_suppresses_day_count_fraction(self):
+        fields = dict(_GEOPARK_FIELDS)
+        del fields["form_of_note"]
+        result = assemble(_make_result(fields=fields, status="done_partial"))
+        root = etree.fromstring(result.xml_bytes.split(b"<!--")[0])
+        assert root.find(f".//{{{BDT_NS}}}DayCountFraction") is None
+
+    def test_missing_form_of_note_adds_suppression_warning(self):
+        fields = dict(_GEOPARK_FIELDS)
+        del fields["form_of_note"]
+        result = assemble(_make_result(fields=fields, status="done_partial"))
+        assert any("FormOfNote missing" in w for w in result.warnings)
+
+    def test_present_issuance_type_still_emits_listing(self):
+        """Sanity check: when IssuanceType is present, Listing is still emitted."""
+        result = assemble(_make_result())
+        root = etree.fromstring(result.xml_bytes)
+        assert root.find(f".//{{{BDT_NS}}}Listing") is not None
+
+    def test_present_form_of_note_still_emits_interest_payment(self):
+        """Sanity check: when FormOfNote is present, InterestPayment is still emitted."""
+        result = assemble(_make_result())
+        root = etree.fromstring(result.xml_bytes)
+        assert root.find(f".//{{{BDT_NS}}}InterestPayment") is not None
+
+
+# ---------------------------------------------------------------------------
 # Unit tests: XSD validation (requires bundled .docs XSD)
 # ---------------------------------------------------------------------------
 

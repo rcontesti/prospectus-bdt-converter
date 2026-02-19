@@ -253,6 +253,16 @@ def _build_issuance(
     _req(issuance, "SettlementDate", f.get("settlement_date"), warnings)
     _req(issuance, "IssuePrice", _fmt_decimal(f.get("issue_price")), warnings)
 
+    # Guard: Listing and all subsequent elements follow IssuanceType in the XSD sequence.
+    # If IssuanceType is missing, emitting Listing would cause a sequence violation on
+    # top of the legitimate missing-field error.  Suppress and record a single warning.
+    if f.get("issuance_type") is None:
+        warnings.append(
+            "IssuanceType missing — Listing, GoverningLaw, SellingRestrictions, "
+            "ManufacturerTargetMarket suppressed to avoid XSD sequence violations"
+        )
+        return
+
     # Listing (required 1+): use extracted listing or fall back to NOT_LISTED
     listing_market = f.get("listing_market")
     listing_elem = _sub(issuance, "Listing")
@@ -325,6 +335,15 @@ def _build_product(
         warnings,
     )  # noqa: E501
     _req(product, "MaturityDate", f.get("maturity_date"), warnings)
+
+    # Guard: InterestPayment and subsequent elements follow FormOfNote in the XSD sequence.
+    # If FormOfNote is missing, emitting InterestPayment would cause a sequence violation.
+    if f.get("form_of_note") is None:
+        warnings.append(
+            "FormOfNote missing — InterestPayment, DayCountFraction, "
+            "BusinessDayConvention, BusinessDayCenter suppressed to avoid XSD sequence violations"
+        )
+        return
 
     # InterestPayment (required)
     _build_interest_payment(product, f, warnings)
