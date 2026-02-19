@@ -50,7 +50,7 @@ def default_ollama_backend():
 
     return OllamaBackend(
         base_url=os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434"),
-        model=os.environ.get("OLLAMA_MODEL", "qwen3-vl:8b"),
+        model=os.environ.get("OLLAMA_MODEL", "qwen3:8b"),
         timeout=float(os.environ.get("OLLAMA_TIMEOUT", "600.0")),
         num_ctx=int(os.environ.get("OLLAMA_NUM_CTX", "8192")),
         temperature=float(os.environ.get("OLLAMA_TEMPERATURE", "0.0")),

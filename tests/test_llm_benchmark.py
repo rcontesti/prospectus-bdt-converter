@@ -44,7 +44,14 @@ from tests.conftest import requires_ollama
 # Output path
 # ---------------------------------------------------------------------------
 
-REPORT_PATH = Path(__file__).parent.parent / "data" / "output" / "debug" / "llm_benchmark_report.md"
+_REPORT_DIR = Path(__file__).parent.parent / "data" / "output" / "debug"
+
+
+def _report_path(model: str) -> Path:
+    """Return a report path that embeds the model name and current date."""
+    date_str = time.strftime("%Y-%m-%d")
+    safe_model = model.replace(":", "_").replace("/", "_")
+    return _REPORT_DIR / f"llm_benchmark_{safe_model}_{date_str}.md"
 
 # ---------------------------------------------------------------------------
 # Reference benchmarks for context
@@ -281,7 +288,8 @@ def _run_scenario(scenario: dict, base_url: str, model: str) -> ScenarioResult:
 
 
 def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> None:
-    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    report_path = _report_path(model)
+    report_path.parent.mkdir(parents=True, exist_ok=True)
 
     lines: list[str] = [
         "# LLM Benchmark Report",
@@ -404,8 +412,8 @@ def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> N
             "",
         ]
 
-    REPORT_PATH.write_text("\n".join(lines), encoding="utf-8")
-    print(f"\nReport written to: {REPORT_PATH}")
+    report_path.write_text("\n".join(lines), encoding="utf-8")
+    print(f"\nReport written to: {report_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -454,5 +462,5 @@ class TestLLMBenchmark:
         successful = [r for r in results if r.valid_json]
         assert len(successful) >= 1, (
             f"All {len(results)} scenarios failed. "
-            f"Check {REPORT_PATH} for details."
+            f"Check {_report_path(model)} for details."
         )
