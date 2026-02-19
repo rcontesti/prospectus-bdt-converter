@@ -124,7 +124,9 @@ _REQUIRED_FIELDS = {
 # ---------------------------------------------------------------------------
 
 
-def normalize_date(value: str | None, field_name: str) -> tuple[str | None, ValidationWarning | None]:
+def normalize_date(
+    value: str | None, field_name: str
+) -> tuple[str | None, ValidationWarning | None]:  # noqa: E501
     """Parse a date string into ISO 8601 (YYYY-MM-DD)."""
     if value is None or str(value).strip() == "":
         return None, None
@@ -140,7 +142,9 @@ def normalize_date(value: str | None, field_name: str) -> tuple[str | None, Vali
         )
 
 
-def normalize_amount(value: str | float | None, field_name: str) -> tuple[float | None, ValidationWarning | None]:
+def normalize_amount(
+    value: str | float | None, field_name: str
+) -> tuple[float | None, ValidationWarning | None]:  # noqa: E501
     """Strip currency symbols and parse to float."""
     if value is None:
         return None, None
@@ -228,7 +232,13 @@ def resolve_lei(
 
         completions = data.get("data", [])
         if completions:
-            lei = completions[0].get("relationships", {}).get("lei-records", {}).get("data", {}).get("id")
+            lei = (
+                completions[0]
+                .get("relationships", {})
+                .get("lei-records", {})
+                .get("data", {})
+                .get("id")
+            )  # noqa: E501
             if not lei:
                 # Alternative structure
                 attrs = completions[0].get("attributes", {})
@@ -268,10 +278,7 @@ def derive_target_market(selling_restrictions: list[str] | None) -> list[str]:
     restrictions_upper = [r.upper() for r in selling_restrictions]
 
     has_us_restriction = "144A" in restrictions_upper or "REGS_CAT2" in restrictions_upper
-    has_eu_mifid = any(
-        "MIFID" in r or "MIFIR" in r
-        for r in restrictions_upper
-    )
+    has_eu_mifid = any("MIFID" in r or "MIFIR" in r for r in restrictions_upper)
 
     if has_us_restriction and not has_eu_mifid:
         return ["NOT_APPLICABLE"]
@@ -309,7 +316,7 @@ def post_process(raw: RawExtractionResult) -> ExtractionResult:
     flat_fields: dict = {}
 
     # Step 1: Flatten
-    for group_name, group_result in raw.groups.items():
+    for _group_name, group_result in raw.groups.items():
         for k, v in group_result.fields.items():
             flat_fields[k] = v
 
@@ -332,12 +339,14 @@ def post_process(raw: RawExtractionResult) -> ExtractionResult:
     # Step 4: Validate ISINs
     for isin in raw.anchor.isins:
         if not validate_isin(isin):
-            warnings.append(ValidationWarning(
-                field_name="isin",
-                group="identifiers",
-                message=f"ISIN '{isin}' failed checksum validation",
-                raw_value=isin,
-            ))
+            warnings.append(
+                ValidationWarning(
+                    field_name="isin",
+                    group="identifiers",
+                    message=f"ISIN '{isin}' failed checksum validation",
+                    raw_value=isin,
+                )
+            )
 
     # Step 5: Validate enums
     for field_name, allowed in _ENUM_FIELDS.items():
@@ -361,11 +370,13 @@ def post_process(raw: RawExtractionResult) -> ExtractionResult:
     status = "done_valid" if not missing else "done_partial"
 
     if missing:
-        warnings.append(ValidationWarning(
-            field_name="__required__",
-            group="validation",
-            message=f"Missing required fields: {', '.join(sorted(missing))}",
-        ))
+        warnings.append(
+            ValidationWarning(
+                field_name="__required__",
+                group="validation",
+                message=f"Missing required fields: {', '.join(sorted(missing))}",
+            )
+        )
 
     return ExtractionResult(
         anchor_bond_name=raw.anchor.bond_name,

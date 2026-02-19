@@ -61,11 +61,8 @@ requires_network = pytest.mark.requires_network
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     """Auto-skip tests marked with requires_pdf when fixtures are absent."""
     for item in items:
-        if "requires_pdf" in item.keywords:
-            # Check if any specific fixture is referenced in parametrize ids
-            # Default: skip if the geopark PDF (simplest fixture) is missing
-            if not _pdf_available("geopark"):
-                item.add_marker(pytest.mark.skip(reason="PDF fixtures not present in data/PDF/"))
+        if "requires_pdf" in item.keywords and not _pdf_available("geopark"):
+            item.add_marker(pytest.mark.skip(reason="PDF fixtures not present in data/PDF/"))
 
 
 # ---------------------------------------------------------------------------

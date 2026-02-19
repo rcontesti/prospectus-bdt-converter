@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pytest
 
+from pipeline.stage5c_post import ExtractionResult, PartyInfo
 from tests.conftest import PDF_PATHS, requires_pdf
 
 # ---------------------------------------------------------------------------
@@ -231,3 +232,77 @@ class TestWriteStage5a:
         out = _out(f"{name}_stage5a_anchors.json")
         out.write_text(json.dumps(data, indent=2), encoding="utf-8")
         assert out.stat().st_size > 0, f"Stage 5a output for {name} is empty"
+
+
+# ---------------------------------------------------------------------------
+# Stage 6 — XML assembly (synthetic GeoPark data, no Ollama required)
+# ---------------------------------------------------------------------------
+
+
+class TestWriteStage6:
+    """Write assembled BDT XML for a synthetic GeoPark bond.
+
+    Uses the same field values as the benchmark test fixture so the output
+    is realistic and useful for manual inspection without needing Ollama.
+    """
+
+    def test_write_geopark_xml(self) -> None:
+        from pipeline.stage6_assemble import assemble
+
+        result = ExtractionResult(
+            anchor_bond_name="GeoPark Limited 5.500% Senior Notes due 2027",
+            anchor_isins=["USG38327AB13"],
+            fields={
+                "isin": "USG38327AB13",
+                "cusip": "G38327AB1",
+                "common_code": "233279448",
+                "aggregate_nominal_amount": 150_000_000.0,
+                "specified_denomination": 200_000.0,
+                "integral_multiples": 1_000.0,
+                "issue_price": 100.0,
+                "interest_rate": 0.055,
+                "pricing_date": "2021-07-13",
+                "issue_date": "2021-07-16",
+                "settlement_date": "2021-07-16",
+                "maturity_date": "2027-01-17",
+                "interest_commencement_date": "2021-07-17",
+                "first_interest_payment_date": "2022-01-17",
+                "interest_type": "FIXED",
+                "interest_payment_frequency": "SEMIANNUALLY",
+                "day_count_fraction": "30/360",
+                "business_day_convention": "FOLLOWING_UNADJUSTED",
+                "business_day_center": "NEW_YORK",
+                "issuance_type": "STANDALONE",
+                "form_of_note": "REGISTERED",
+                "status_of_note": "SENIOR_UNSECURED",
+                "specified_currency": "USD",
+                "governing_law": "NEW_YORK_LAW",
+                "selling_restrictions": ["144A", "REGS_CAT2"],
+                "issuer_name": "GeoPark Limited",
+            },
+            parties=[
+                PartyInfo(name="GeoPark Limited", role="ISSUER"),
+                PartyInfo(name="Citibank N.A.", role="TRUSTEE"),
+            ],
+            status="done_partial",  # No real LEIs → done_partial expected
+            manufacturer_target_market=["NOT_APPLICABLE"],
+        )
+
+        assembly = assemble(result)
+        out = _out("geopark_stage6_output.xml")
+        out.write_bytes(assembly.xml_bytes)
+
+        summary_lines = [
+            "=== Stage 6 Assembly: GEOPARK ===",
+            f"filename:   {assembly.filename}",
+            f"xsd_valid:  {assembly.xsd_valid}",
+            f"status:     {assembly.status}",
+            "",
+            "XSD errors:" if assembly.xsd_errors else "XSD errors: none",
+            *(f"  - {e}" for e in assembly.xsd_errors),
+            "",
+            "Assembly warnings:",
+            *(f"  - {w}" for w in assembly.warnings),
+        ]
+        _out("geopark_stage6_summary.txt").write_text("\n".join(summary_lines), encoding="utf-8")
+        assert out.stat().st_size > 0, "Stage 6 XML output is empty"

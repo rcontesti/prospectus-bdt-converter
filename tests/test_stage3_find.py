@@ -18,9 +18,9 @@ class TestFindGeoPark:
     @requires_pdf
     def test_section_title_matches_target(self, geopark_sections):
         titles_lower = [s.title.lower() for s in geopark_sections]
-        assert any(
-            "description" in t or "terms" in t for t in titles_lower
-        ), f"No section title contains 'description' or 'terms': {titles_lower}"
+        assert any("description" in t or "terms" in t for t in titles_lower), (
+            f"No section title contains 'description' or 'terms': {titles_lower}"
+        )
 
     @requires_pdf
     def test_section_text_not_empty(self, geopark_sections):
@@ -84,7 +84,7 @@ class TestIsTargetHeading:
             pytest.param("Use of Proceeds", id="terminator_heading"),
             pytest.param("Risk Factors", id="risk_factors"),
             pytest.param(
-                "For a description of the Notes and the terms of the indenture, see the discussion under Description of the Notes",
+                "For a description of the Notes and the terms of the indenture, see the discussion under Description of the Notes",  # noqa: E501
                 id="cross_reference_long",
             ),
         ],

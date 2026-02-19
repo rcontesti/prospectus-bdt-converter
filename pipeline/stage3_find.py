@@ -16,12 +16,11 @@ detect.  Heading detection is simpler and more robust for MVP.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from rapidfuzz import fuzz
 
-from pipeline.stage2_parse import ParsedDocument, Page, Block
-
+from pipeline.stage2_parse import Page, ParsedDocument
 
 # ---------------------------------------------------------------------------
 # Target headings (case-insensitive, fuzzy-matched)
@@ -36,7 +35,7 @@ TARGET_HEADINGS: list[str] = [
     "Description of the Securities",
     "Description of the New Securities",
     "Description of the New Notes",
-    "Summary of Terms",                    # some EM OMs lead with this
+    "Summary of Terms",  # some EM OMs lead with this
     "Summary of the Terms",
 ]
 
@@ -67,7 +66,7 @@ SECTION_TERMINATORS: list[str] = [
     "Business",
     "Risk Factors",
     "Taxation",
-    "Tax Considerations",               # catches "CERTAIN TAX CONSIDERATIONS"
+    "Tax Considerations",  # catches "CERTAIN TAX CONSIDERATIONS"
     "ERISA",
     "Plan of Distribution",
     "Underwriting",
@@ -81,11 +80,11 @@ SECTION_TERMINATORS: list[str] = [
     "Exhibit",
     "Glossary",
     "Defined Terms",
-    "Form of",                          # e.g. "Form of Global Note"
-    "Book-Entry",                       # e.g. "BOOK-ENTRY, DELIVERY AND FORM"
-    "Clearing",                         # e.g. "CLEARING AND SETTLEMENT"
+    "Form of",  # e.g. "Form of Global Note"
+    "Book-Entry",  # e.g. "BOOK-ENTRY, DELIVERY AND FORM"
+    "Clearing",  # e.g. "CLEARING AND SETTLEMENT"
     "Transfer Restrictions",
-    "Selling Restrictions",             # section heading, not the field
+    "Selling Restrictions",  # section heading, not the field
 ]
 
 _TERMINATOR_THRESHOLD = 75
@@ -99,12 +98,13 @@ _TERMINATOR_THRESHOLD = 75
 @dataclass
 class BondSection:
     """A section of the document that describes a single bond."""
-    title: str                  # The matched heading text
-    page_start: int             # Page number (1-indexed) where the heading was found
-    page_end: int               # Last page included in this section
-    text: str                   # Full concatenated text of this section
-    match_score: float          # Fuzzy match score against the target heading
-    target_matched: str         # Which target heading this matched
+
+    title: str  # The matched heading text
+    page_start: int  # Page number (1-indexed) where the heading was found
+    page_end: int  # Last page included in this section
+    text: str  # Full concatenated text of this section
+    match_score: float  # Fuzzy match score against the target heading
+    target_matched: str  # Which target heading this matched
 
 
 # ---------------------------------------------------------------------------
@@ -187,7 +187,11 @@ def _collect_section_text(
     for pi in range(start_page_idx, end_page_idx + 1):
         page = pages[pi]
         block_start = start_block_idx if pi == start_page_idx else 0
-        block_end = end_block_idx if (pi == end_page_idx and end_block_idx is not None) else len(page.blocks)
+        block_end = (
+            end_block_idx
+            if (pi == end_page_idx and end_block_idx is not None)
+            else len(page.blocks)
+        )  # noqa: E501
 
         for bi in range(block_start, block_end):
             block_text = page.blocks[bi].text.strip()
@@ -279,13 +283,17 @@ def find_bond_sections(doc: ParsedDocument) -> list[BondSection]:
         # Collect all text in the section (excluding the heading itself)
         section_text = _collect_section_text(pages, pi, bi + 1, term_pi, term_bi)
 
-        sections.append(BondSection(
-            title=heading_text,
-            page_start=pages[pi].page_number,
-            page_end=pages[term_pi].page_number if term_pi < len(pages) else pages[-1].page_number,
-            text=section_text,
-            match_score=score,
-            target_matched=target,
-        ))
+        sections.append(
+            BondSection(
+                title=heading_text,
+                page_start=pages[pi].page_number,
+                page_end=pages[term_pi].page_number
+                if term_pi < len(pages)
+                else pages[-1].page_number,
+                text=section_text,
+                match_score=score,
+                target_matched=target,
+            )
+        )
 
     return sections

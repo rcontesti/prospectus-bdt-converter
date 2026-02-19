@@ -187,7 +187,7 @@ FIELD_GROUPS = {
         "fields": {
             "pricing_date": "Trade/pricing date (YYYY-MM-DD)",
             "issue_date": "Issue/settlement date (YYYY-MM-DD)",
-            "settlement_date": "Settlement date if different from issue date (YYYY-MM-DD), else same as issue_date",
+            "settlement_date": "Settlement date if different from issue date (YYYY-MM-DD), else same as issue_date",  # noqa: E501
             "maturity_date": "Final maturity date (YYYY-MM-DD)",
             "interest_commencement_date": "Date from which interest accrues (YYYY-MM-DD)",
         },
@@ -196,23 +196,23 @@ FIELD_GROUPS = {
         "description": "Coupon and day count terms",
         "fields": {
             "interest_type": f"One of: {INTEREST_TYPE}",
-            "interest_rate": "Annual interest rate as decimal (e.g. 0.055 for 5.5%), or null if not fixed",
+            "interest_rate": "Annual interest rate as decimal (e.g. 0.055 for 5.5%), or null if not fixed",  # noqa: E501
             "interest_payment_frequency": f"One of: {INTEREST_PAYMENT_FREQUENCY}",
             "day_count_fraction": f"One of: {DAY_COUNT_FRACTION}",
             "business_day_convention": f"One of: {BUSINESS_DAY_CONVENTION}",
-            "business_day_center": f"One of: {BUSINESS_DAY_CENTER}. Use NEW_YORK for USD bonds if exact center not listed.",
+            "business_day_center": f"One of: {BUSINESS_DAY_CENTER}. Use NEW_YORK for USD bonds if exact center not listed.",  # noqa: E501
             "first_interest_payment_date": "Date of first coupon payment (YYYY-MM-DD)",
         },
     },
     "issuance": {
         "description": "Issuance terms",
         "fields": {
-            "issuance_type": f"One of: {ISSUANCE_TYPE}. Use STANDALONE unless document references a programme/MTN.",
-            "issue_price": "Issue price as percentage of par (e.g. 100.0 for par, 98.5 for discount)",
+            "issuance_type": f"One of: {ISSUANCE_TYPE}. Use STANDALONE unless document references a programme/MTN.",  # noqa: E501
+            "issue_price": "Issue price as percentage of par (e.g. 100.0 for par, 98.5 for discount)",  # noqa: E501
             "form_of_note": f"One of: {FORM_OF_NOTE}",
             "status_of_note": f"One of: {STATUS_OF_NOTE}",
-            "governing_law": f"One of: {GOVERNING_LAW}. Use NEW_YORK_LAW for EM bonds if exact law not listed.",
-            "redemption_payment_basis": f"One of: {REDEMPTION_PAYMENT_BASIS}. Use INSTALLMENT if the bond amortizes.",
+            "governing_law": f"One of: {GOVERNING_LAW}. Use NEW_YORK_LAW for EM bonds if exact law not listed.",  # noqa: E501
+            "redemption_payment_basis": f"One of: {REDEMPTION_PAYMENT_BASIS}. Use INSTALLMENT if the bond amortizes.",  # noqa: E501
             "listing_market": "Name of the stock exchange where listed (free text), or NOT_LISTED",
         },
     },
@@ -231,7 +231,7 @@ FIELD_GROUPS = {
         "description": "Selling restrictions",
         "fields": {
             "selling_restrictions": f"List of applicable codes from: {SELLING_RESTRICTION_CODE}",
-            "priips_restriction": "true if PRIIPs KID restriction applies (EU retail), false otherwise",
+            "priips_restriction": "true if PRIIPs KID restriction applies (EU retail), false otherwise",  # noqa: E501
         },
     },
 }

@@ -19,7 +19,6 @@ from typing import Literal
 
 import pymupdf  # fitz
 
-
 # ---------------------------------------------------------------------------
 # Data types
 # ---------------------------------------------------------------------------
@@ -31,6 +30,7 @@ BlockType = Literal["heading", "paragraph", "table_row", "unknown"]
 @dataclass
 class Block:
     """A single logical text block on a page."""
+
     type: BlockType
     text: str
     # pymupdf bounding box (x0, y0, x1, y1) in points
@@ -40,6 +40,7 @@ class Block:
 @dataclass
 class Page:
     """Text content of a single PDF page."""
+
     page_number: int  # 1-indexed
     raw_text: str
     blocks: list[Block] = field(default_factory=list)
@@ -48,6 +49,7 @@ class Page:
 @dataclass
 class ParsedDocument:
     """Result of Stage 2."""
+
     path: Path
     page_count: int
     pages: list[Page]
@@ -80,7 +82,11 @@ def _classify_block(text: str, font_size: float, page_font_sizes: list[float]) -
 
     # Headings: short, and font size above the page median
     median_size = sorted(page_font_sizes)[len(page_font_sizes) // 2] if page_font_sizes else 11.0
-    if len(stripped) <= _MAX_HEADING_LEN and "\n" not in stripped.strip() and font_size > median_size * 1.05:
+    if (
+        len(stripped) <= _MAX_HEADING_LEN
+        and "\n" not in stripped.strip()
+        and font_size > median_size * 1.05
+    ):  # noqa: E501
         return "heading"
 
     # Table rows: contain tab characters or multiple-space alignment
@@ -158,8 +164,7 @@ def parse_pdf(pdf_path: str | Path) -> ParsedDocument:
 
             # Concatenate all text in this block
             block_text = "\n".join(
-                "".join(s["text"] for s in line["spans"])
-                for line in block_lines
+                "".join(s["text"] for s in line["spans"]) for line in block_lines
             ).strip()
 
             if not block_text:
@@ -167,10 +172,7 @@ def parse_pdf(pdf_path: str | Path) -> ParsedDocument:
 
             # Representative font size: max size in this block (headings use largest font)
             block_font_sizes = [
-                s["size"]
-                for line in block_lines
-                for s in line["spans"]
-                if s.get("size", 0) > 0
+                s["size"] for line in block_lines for s in line["spans"] if s.get("size", 0) > 0
             ]
             rep_size = max(block_font_sizes) if block_font_sizes else 11.0
 
@@ -180,11 +182,13 @@ def parse_pdf(pdf_path: str | Path) -> ParsedDocument:
             btype = _classify_block(block_text, rep_size, page_font_sizes)
             classified_blocks.append(Block(type=btype, text=block_text, bbox=bbox))
 
-        pages.append(Page(
-            page_number=page_number,
-            raw_text=raw_text,
-            blocks=classified_blocks,
-        ))
+        pages.append(
+            Page(
+                page_number=page_number,
+                raw_text=raw_text,
+                blocks=classified_blocks,
+            )
+        )
 
     doc.close()
 

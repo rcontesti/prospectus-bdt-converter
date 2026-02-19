@@ -32,7 +32,7 @@ from __future__ import annotations
 import json
 import textwrap
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import httpx
@@ -52,6 +52,7 @@ def _report_path(model: str) -> Path:
     date_str = time.strftime("%Y-%m-%d")
     safe_model = model.replace(":", "_").replace("/", "_")
     return _REPORT_DIR / f"llm_benchmark_{safe_model}_{date_str}.md"
+
 
 # ---------------------------------------------------------------------------
 # Reference benchmarks for context
@@ -141,8 +142,8 @@ _HARD_SCHEMA = {
     "maturity_date": "Final maturity date (YYYY-MM-DD)",
     "interest_rate": "Annual rate as decimal (e.g. 0.055 for 5.5%)",
     "interest_type": "One of: ['FIXED', 'FLOATING', 'ZERO_COUPON', 'INDEX_LINKED_INTEREST']",
-    "day_count_fraction": "One of: ['ICMA_ACT/ACT', 'ISDA_ACT/ACT', '30/360', '30/365', 'ACT/360', 'ACT/365']",
-    "governing_law": "One of: ['ENGLISH_LAW', 'NEW_YORK_LAW', 'FRENCH_LAW', 'GERMAN_LAW', 'LUXEMBOURG_LAW']",
+    "day_count_fraction": "One of: ['ICMA_ACT/ACT', 'ISDA_ACT/ACT', '30/360', '30/365', 'ACT/360', 'ACT/365']",  # noqa: E501
+    "governing_law": "One of: ['ENGLISH_LAW', 'NEW_YORK_LAW', 'FRENCH_LAW', 'GERMAN_LAW', 'LUXEMBOURG_LAW']",  # noqa: E501
 }
 
 _SYSTEM_PROMPT = (
@@ -302,7 +303,7 @@ def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> N
         "",
         "## Results",
         "",
-        "| Scenario | Context chars | Latency (s) | Tokens generated | Tokens/sec | Valid JSON | Fields returned | Error |",
+        "| Scenario | Context chars | Latency (s) | Tokens generated | Tokens/sec | Valid JSON | Fields returned | Error |",  # noqa: E501
         "|---|---|---|---|---|---|---|---|",
     ]
 
@@ -346,9 +347,12 @@ def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> N
     ]
 
     for setup, tps in REFERENCE_BENCHMARKS.items():
-        marker = " ← **your result is here**" if avg_tps > 0 and abs(avg_tps - tps) == min(
-            abs(avg_tps - v) for v in REFERENCE_BENCHMARKS.values()
-        ) else ""
+        marker = (
+            " ← **your result is here**"
+            if avg_tps > 0
+            and abs(avg_tps - tps) == min(abs(avg_tps - v) for v in REFERENCE_BENCHMARKS.values())
+            else ""
+        )
         lines.append(f"| {setup} | ~{tps}{marker} |")
 
     lines += [
@@ -363,7 +367,7 @@ def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> N
 
     if avg_tps == 0:
         lines += [
-            "All scenarios failed or timed out. Check that Ollama is running and the model is pulled.",
+            "All scenarios failed or timed out. Check that Ollama is running and the model is pulled.",  # noqa: E501
             "",
             "```",
             "ollama list          # confirm model is present",
@@ -376,11 +380,11 @@ def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> N
             "- Model running entirely on CPU (no GPU/Metal acceleration)",
             "- Available RAM is insufficient — model is swapping to disk",
             "- Try a smaller model: `ollama pull phi3.5` (~2.2 GB, ~55 tok/s on M2 Pro)",
-            "- Or switch to a text-only model: `ollama pull qwen2.5:7b` (~4.7 GB, ~35 tok/s on M2 Pro)",
+            "- Or switch to a text-only model: `ollama pull qwen2.5:7b` (~4.7 GB, ~35 tok/s on M2 Pro)",  # noqa: E501
         ]
     elif avg_tps < 15:
         lines += [
-            f"**Slow ({avg_tps:.1f} tok/s).** The pipeline will work but extractions take several minutes.",
+            f"**Slow ({avg_tps:.1f} tok/s).** The pipeline will work but extractions take several minutes.",  # noqa: E501
             "- Consider a lighter model for faster iteration: `ollama pull qwen2.5:7b`",
             "- If on Apple Silicon, ensure Ollama has Metal access (check Activity Monitor → GPU)",
         ]
@@ -391,7 +395,7 @@ def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> N
         ]
     else:
         lines += [
-            f"**Good ({avg_tps:.1f} tok/s).** Extractions will complete in under a minute per bond.",
+            f"**Good ({avg_tps:.1f} tok/s).** Extractions will complete in under a minute per bond.",  # noqa: E501
         ]
 
     # Raw responses
@@ -406,7 +410,7 @@ def _write_report(results: list[ScenarioResult], model: str, base_url: str) -> N
         lines += [
             f"### {r.label}",
             "",
-            f"```json",
+            "```json",
             r.raw_response if r.raw_response else "(empty — error or timeout)",
             "```",
             "",
@@ -461,6 +465,5 @@ class TestLLMBenchmark:
 
         successful = [r for r in results if r.valid_json]
         assert len(successful) >= 1, (
-            f"All {len(results)} scenarios failed. "
-            f"Check {_report_path(model)} for details."
+            f"All {len(results)} scenarios failed. Check {_report_path(model)} for details."
         )
