@@ -89,7 +89,7 @@ class OllamaBackend:
     """
 
     base_url: str = "http://localhost:11434"
-    model: str = "qwen2.5:7b"
+    model: str = "qwen3-vl:8b"
     timeout: float = 120.0
     temperature: float = 0.0
     num_ctx: int = 8192

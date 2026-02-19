@@ -44,7 +44,7 @@ curl http://localhost:11434
 Pull the default model used by this pipeline:
 
 ```bash
-ollama pull qwen2.5:7b
+ollama pull qwen3-vl:8b
 ```
 
 Verify it downloaded:
@@ -52,7 +52,7 @@ Verify it downloaded:
 ```bash
 ollama list
 # NAME              ID            SIZE    MODIFIED
-# qwen2.5:7b        ...           4.7 GB  ...
+# qwen3-vl:8b       ...           5.2 GB  ...
 ```
 
 See [Model recommendations](#model-recommendations) for alternatives.
@@ -71,7 +71,7 @@ Open `.env` and set `OLLAMA_MODEL` to match exactly what `ollama list` shows:
 
 ```
 OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=qwen2.5:7b
+OLLAMA_MODEL=qwen3-vl:8b
 ```
 
 The `.env` file is git-ignored and never committed. You only need to set variables
@@ -83,7 +83,7 @@ the only ones you need.
 | Variable | Default | Description |
 |---|---|---|
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | URL of the Ollama instance |
-| `OLLAMA_MODEL` | `qwen2.5:7b` | Model tag (must match `ollama list`) |
+| `OLLAMA_MODEL` | `qwen3-vl:8b` | Model tag (must match `ollama list`) |
 | `OLLAMA_TIMEOUT` | `120.0` | Per-request timeout in seconds |
 | `OLLAMA_NUM_CTX` | `8192` | Context window in tokens |
 | `OLLAMA_TEMPERATURE` | `0.0` | Sampling temperature (0 = deterministic) |
@@ -116,7 +116,8 @@ tests/test_stage5b_llm.py::TestOllamaIntegration::test_extract_identifiers_geopa
 
 | Model | Pull command | VRAM | Notes |
 |---|---|---|---|
-| `qwen2.5:7b` | `ollama pull qwen2.5:7b` | ~5 GB | **Default. Best balance of speed and accuracy for this task.** |
+| `qwen3-vl:8b` | `ollama pull qwen3-vl:8b` | ~5.2 GB | **Default. Vision-language model; handles text and layout equally well.** |
+| `qwen2.5:7b` | `ollama pull qwen2.5:7b` | ~4.7 GB | Strong text-only alternative. Slightly faster than qwen3-vl. |
 | `qwen2.5:14b` | `ollama pull qwen2.5:14b` | ~9 GB | Noticeably more accurate on complex tables. Recommended if you have the VRAM. |
 | `phi3.5:mini` | `ollama pull phi3.5` | ~2.2 GB | Smallest option. Adequate for simple prospectuses; struggles with multi-bond documents. |
 | `mistral:7b` | `ollama pull mistral` | ~4.1 GB | Solid alternative to qwen2.5:7b. |
@@ -140,7 +141,7 @@ If Ollama runs on a remote server or a different port, set `OLLAMA_BASE_URL`:
 
 ```
 OLLAMA_BASE_URL=http://192.168.1.100:11434
-OLLAMA_MODEL=qwen2.5:7b
+OLLAMA_MODEL=qwen3-vl:8b
 ```
 
 Standard Ollama has no authentication. If your instance is behind a reverse proxy
@@ -154,8 +155,8 @@ can be added to `OllamaBackend` in `pipeline/llm_backend.py`.
 **`Cannot connect to Ollama at http://localhost:11434. Is it running?`**
 - Ollama is not running. Start it: `ollama serve` (Linux) or open the Ollama app (macOS/Windows).
 
-**`Ollama HTTP 404: model 'qwen2.5:7b' not found`**
-- The model has not been pulled. Run `ollama pull qwen2.5:7b`.
+**`Ollama HTTP 404: model 'qwen3-vl:8b' not found`**
+- The model has not been pulled. Run `ollama pull qwen3-vl:8b`.
 - Or your `OLLAMA_MODEL` in `.env` does not match `ollama list` exactly.
 
 **Extraction is very slow (>2 min per bond)**
