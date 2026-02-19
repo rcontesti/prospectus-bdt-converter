@@ -417,12 +417,14 @@ class TestLLMBenchmark:
     """LLM speed and quality benchmark across four scenarios."""
 
     @requires_ollama
+    @pytest.mark.timeout(3600)  # override global 600s — up to 1 hour for slow hardware
     def test_benchmark(self) -> None:
         """
         Run all four benchmark scenarios and write the report.
 
         Passes if the model returns valid JSON for at least one scenario.
-        The report is written regardless of outcome.
+        The report is written after EVERY scenario so partial results are
+        always on disk even if the test is interrupted.
         """
         from pipeline.settings import default_ollama_backend
 
@@ -446,8 +448,8 @@ class TestLLMBenchmark:
                 flush=True,
             )
             results.append(result)
-
-        _write_report(results, model, base_url)
+            # Write after every scenario — report is always up-to-date
+            _write_report(results, model, base_url)
 
         successful = [r for r in results if r.valid_json]
         assert len(successful) >= 1, (
