@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 
 from pipeline.stage5c_post import ExtractionResult, PartyInfo
-from tests.conftest import PDF_PATHS, requires_pdf
+from tests.conftest import PDF_PATHS, requires_ollama, requires_pdf
 
 # ---------------------------------------------------------------------------
 # Output directory
@@ -33,6 +33,8 @@ _doc_cache: dict[str, object] = {}
 _sections_cache: dict[str, list] = {}
 _tables_cache: dict[str, list] = {}
 _anchors_cache: dict[str, list] = {}
+_extraction_cache: dict[str, list] = {}
+_assembly_cache: dict[str, list] = {}
 
 
 def _get_doc(name: str):
@@ -69,6 +71,22 @@ def _get_anchors(name: str):
     return _anchors_cache[name]
 
 
+def _get_extraction(name: str):
+    if name not in _extraction_cache:
+        from pipeline.stage5_extract import extract_bond
+
+        _extraction_cache[name] = [extract_bond(t) for t in _get_tables(name)]
+    return _extraction_cache[name]
+
+
+def _get_assembly(name: str):
+    if name not in _assembly_cache:
+        from pipeline.stage6_assemble import assemble
+
+        _assembly_cache[name] = [assemble(e) for e in _get_extraction(name)]
+    return _assembly_cache[name]
+
+
 def _skip_if_missing(name: str) -> None:
     if not PDF_PATHS.get(name, Path("/missing")).exists():
         pytest.skip(f"PDF fixture '{name}' not present in data/PDF/")
@@ -88,6 +106,12 @@ _FIXTURES = [
     pytest.param("geopark", id="geopark"),
     pytest.param("edenor", id="edenor"),
     pytest.param("csn", id="csn"),
+    pytest.param("pdvsa", id="pdvsa"),
+    pytest.param("buenos_aires", id="buenos_aires"),
+    pytest.param("argentina_424b5", id="argentina_424b5"),
+    pytest.param("volcan", id="volcan"),
+    pytest.param("liquid_telecom", id="liquid_telecom"),
+    pytest.param("argentina_gdp", id="argentina_gdp"),
 ]
 
 
@@ -239,11 +263,10 @@ class TestWriteStage5a:
 # ---------------------------------------------------------------------------
 
 
-class TestWriteStage6:
-    """Write assembled BDT XML for a synthetic GeoPark bond.
+class TestWriteStage6Synthetic:
+    """Write assembled BDT XML for a synthetic GeoPark bond (no Ollama needed).
 
-    Uses the same field values as the benchmark test fixture so the output
-    is realistic and useful for manual inspection without needing Ollama.
+    Useful as a fast structural check that doesn't require LLM extraction.
     """
 
     def test_write_geopark_xml(self) -> None:
@@ -289,11 +312,11 @@ class TestWriteStage6:
         )
 
         assembly = assemble(result)
-        out = _out("geopark_stage6_output.xml")
+        out = _out("geopark_stage6_synthetic.xml")
         out.write_bytes(assembly.xml_bytes)
 
         summary_lines = [
-            "=== Stage 6 Assembly: GEOPARK ===",
+            "=== Stage 6 Assembly: GEOPARK (synthetic) ===",
             f"filename:   {assembly.filename}",
             f"xsd_valid:  {assembly.xsd_valid}",
             f"status:     {assembly.status}",
@@ -304,5 +327,115 @@ class TestWriteStage6:
             "Assembly warnings:",
             *(f"  - {w}" for w in assembly.warnings),
         ]
-        _out("geopark_stage6_summary.txt").write_text("\n".join(summary_lines), encoding="utf-8")
-        assert out.stat().st_size > 0, "Stage 6 XML output is empty"
+        _out("geopark_stage6_synthetic_summary.txt").write_text(
+            "\n".join(summary_lines), encoding="utf-8"
+        )
+        assert out.stat().st_size > 0, "Stage 6 synthetic XML output is empty"
+
+
+# ---------------------------------------------------------------------------
+# Stage 5 (full LLM) — extraction on all real PDF fixtures
+# ---------------------------------------------------------------------------
+
+
+class TestWriteStage5Full:
+    """Run full LLM extraction (stages 5a→5c) on every fixture.
+
+    Writes one JSON file per fixture with all extracted fields, parties,
+    warnings, and status for every bond section found in that PDF.
+    Requires both PDF fixtures and a running Ollama instance.
+    """
+
+    @requires_pdf
+    @requires_ollama
+    @pytest.mark.parametrize("name", _FIXTURES)
+    def test_write_extraction(self, name: str) -> None:
+        _skip_if_missing(name)
+        extractions = _get_extraction(name)
+        tables = _get_tables(name)
+
+        sections_data = []
+        for i, (result, table) in enumerate(zip(extractions, tables, strict=True)):
+            sections_data.append(
+                {
+                    "section_index": i,
+                    "section_title": table.section_title,
+                    "anchor_bond_name": result.anchor_bond_name,
+                    "anchor_isins": result.anchor_isins,
+                    "status": result.status,
+                    "fields": result.fields,
+                    "parties": [
+                        {
+                            "name": p.name,
+                            "role": p.role,
+                            "lei": p.lei,
+                            "lei_resolved": p.lei_resolved,
+                        }
+                        for p in result.parties
+                    ],
+                    "warnings": [
+                        {"field": w.field_name, "group": w.group, "message": w.message}
+                        for w in result.warnings
+                    ],
+                    "manufacturer_target_market": result.manufacturer_target_market,
+                }
+            )
+
+        out = _out(f"{name}_stage5_extraction.json")
+        out.write_text(
+            json.dumps({"fixture": name, "sections": sections_data}, indent=2, default=str),
+            encoding="utf-8",
+        )
+        assert out.stat().st_size > 0, f"Stage 5 extraction output for {name} is empty"
+
+
+# ---------------------------------------------------------------------------
+# Stage 6 (full pipeline) — XML assembly on all real PDF fixtures
+# ---------------------------------------------------------------------------
+
+
+class TestWriteStage6All:
+    """Assemble BDT XML from real LLM-extracted data for every fixture.
+
+    Writes one XML per bond section and a combined summary text file per
+    fixture.  Requires both PDF fixtures and a running Ollama instance.
+    """
+
+    @requires_pdf
+    @requires_ollama
+    @pytest.mark.parametrize("name", _FIXTURES)
+    def test_write_assembly(self, name: str) -> None:
+        _skip_if_missing(name)
+        assemblies = _get_assembly(name)
+        tables = _get_tables(name)
+
+        multi = len(assemblies) > 1
+        for i, assembly in enumerate(assemblies):
+            suffix = f"_section{i}" if multi else ""
+            xml_out = _out(f"{name}{suffix}_stage6.xml")
+            xml_out.write_bytes(assembly.xml_bytes)
+
+        summary_lines = [
+            f"=== Stage 6 Assembly: {name.upper()} ===",
+            f"Sections: {len(assemblies)}",
+            "",
+        ]
+        for i, (assembly, table) in enumerate(zip(assemblies, tables, strict=True)):
+            summary_lines += [
+                "=" * 60,
+                f"Section {i}: {table.section_title}",
+                f"  filename:  {assembly.filename}",
+                f"  xsd_valid: {assembly.xsd_valid}",
+                f"  status:    {assembly.status}",
+                "",
+                "  XSD errors:" if assembly.xsd_errors else "  XSD errors: none",
+                *(f"    - {e}" for e in assembly.xsd_errors),
+                "",
+                "  Assembly warnings:",
+                *(f"    - {w}" for w in assembly.warnings),
+                "",
+            ]
+
+        out = _out(f"{name}_stage6_summary.txt")
+        out.write_text("\n".join(summary_lines), encoding="utf-8")
+        assert len(assemblies) > 0, f"No assembly results for {name}"
