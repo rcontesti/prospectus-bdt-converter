@@ -35,8 +35,6 @@ TARGET_HEADINGS: list[str] = [
     "Description of the Securities",
     "Description of the New Securities",
     "Description of the New Notes",
-    "Summary of Terms",  # some EM OMs lead with this
-    "Summary of the Terms",
 ]
 
 # Fuzzy match score threshold (0–100).
@@ -80,6 +78,10 @@ SECTION_TERMINATORS: list[str] = [
     "Exhibit",
     "Glossary",
     "Defined Terms",
+    "Certain Defined Terms",  # e.g. "CERTAIN DEFINED TERMS AND CONVENTIONS/CONDITIONS"
+    "Summary of Results",  # e.g. EDENOR "Summary of Results" — not a bond section
+    "Results of Operations",  # financial-statement section
+    "Currency Denomination",  # e.g. "Currency Denomination of the New Securities"
     "Form of",  # e.g. "Form of Global Note"
     "Book-Entry",  # e.g. "BOOK-ENTRY, DELIVERY AND FORM"
     "Clearing",  # e.g. "CLEARING AND SETTLEMENT"
@@ -142,9 +144,12 @@ def _is_target_heading(text: str) -> tuple[bool, float, str]:
         t_lower = target.lower()
         # Primary: token_sort_ratio (word order invariant, good for all-caps headings)
         score_sort = fuzz.token_sort_ratio(t_lower, lower)
-        # Secondary: partial_ratio — only useful if candidate is longer than target
-        # (e.g. "Description of the 5.500% Senior Notes" contains target)
-        score_partial = fuzz.partial_ratio(t_lower, lower) if len(lower) >= len(t_lower) else 0
+        # Secondary: partial_ratio — only fire when candidate is moderately longer than
+        # target (handles "Description of the 5.500% Senior Notes" ↔ "Description of the
+        # Notes").  Cap at 35 extra chars to avoid matching long sentences that merely
+        # contain the target words (e.g. "Gains Realized from … Disposition of the Notes").
+        excess = len(lower) - len(t_lower)
+        score_partial = fuzz.partial_ratio(t_lower, lower) if 0 < excess <= 35 else 0
         score = max(score_sort, score_partial)
         if score > best_score:
             best_score = score
@@ -233,7 +238,10 @@ def find_bond_sections(doc: ParsedDocument) -> list[BondSection]:
             if not candidate or len(candidate) > _MAX_HEADING_CHARS:
                 continue
             matched, score, target = _is_target_heading(candidate)
-            if matched:
+            # Exclude headings that are terminators even if they fuzzy-match a target
+            # (e.g. "CERTAIN DEFINED TERMS AND CONDITIONS" fuzzy-matches "Terms and
+            # Conditions" but it opens a definitions section, not a bond terms section).
+            if matched and not _is_terminator_heading(candidate):
                 hits.append((pi, bi, candidate, score, target))
 
     if not hits:

@@ -87,6 +87,23 @@ class TestIsTargetHeading:
                 "For a description of the Notes and the terms of the indenture, see the discussion under Description of the Notes",  # noqa: E501
                 id="cross_reference_long",
             ),
+            # Former false positives: "Summary of Terms" target was too generic
+            pytest.param("Summary of Results", id="summary_of_results"),
+            pytest.param("SUMMARY OF THE INVITATION", id="summary_invitation"),
+            pytest.param(
+                "A summary of transactions with related parties follows",
+                id="summary_related_parties",
+            ),
+            # Former false positive: partial_ratio was firing on long sentences
+            # that merely contain target words as a substring.
+            pytest.param(
+                "Gains Realized from the Sale or Other Disposition of the Notes",
+                id="long_sentence_with_notes",
+            ),
+            pytest.param(
+                "Following, a description of the economic activity of the subsidiaries",
+                id="long_sentence_with_description",
+            ),
         ],
     )
     def test_negative_matches(self, text):

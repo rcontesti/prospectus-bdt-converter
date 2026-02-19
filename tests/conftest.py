@@ -46,7 +46,7 @@ FIXTURE_CATALOG: dict[str, dict] = {
     "csn": {
         "path": PDF_PATHS["csn"],
         "page_count": 78,
-        "min_sections": 2,
+        "min_sections": 1,  # 2023 + 2026 notes are in one "DESCRIPTION OF NOTES" section  # noqa: E501
         "issuer": "CSN Resources",
     },
     "pdvsa": {
