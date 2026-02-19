@@ -146,9 +146,9 @@ def geopark_sections(geopark_doc):
 
 
 @pytest.fixture(scope="session")
-def geopark_table(geopark_sections):
+def geopark_table(geopark_doc, geopark_sections):
     """Detect summary table for the first GeoPark section (session-scoped)."""
     from pipeline.stage4_table import detect_summary_table
 
     assert len(geopark_sections) >= 1, "GeoPark should have at least one bond section"
-    return detect_summary_table(geopark_sections[0])
+    return detect_summary_table(geopark_sections[0], parsed_doc=geopark_doc)

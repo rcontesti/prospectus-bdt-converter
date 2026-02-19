@@ -38,8 +38,9 @@ def _get_tables(name: str):
     if name not in _tables_cache:
         from pipeline.stage4_table import detect_summary_table
 
+        doc = _get_doc(name)
         sections = _get_sections(name)
-        _tables_cache[name] = [detect_summary_table(s) for s in sections]
+        _tables_cache[name] = [detect_summary_table(s, parsed_doc=doc) for s in sections]
     return _tables_cache[name]
 
 

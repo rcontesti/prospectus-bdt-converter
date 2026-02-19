@@ -66,9 +66,14 @@ def extract_anchor(table_result: TableDetectionResult) -> BondAnchor:
     """
     Extract the bond anchor (name + ISINs) from a table detection result.
 
-    Searches the table text first (higher signal density), then falls back
-    to the full section text.  Only ISINs passing the ISO 6166 checksum
-    are kept.
+    Search order (highest signal density first):
+    1. table_text — the compact key-terms block from Stage 4
+    2. full_section_text — the full "Description of Notes" section body
+    3. full_doc_fallback_text — first N pages of the whole document (cover page,
+       front-matter summary tables).  Many EM prospectuses list ISINs only on
+       the cover or in a "Summary of the Offering" table, not in the bond section.
+
+    Only ISINs passing the ISO 6166 checksum are kept.
 
     Args:
         table_result: Output from Stage 4.
@@ -76,11 +81,14 @@ def extract_anchor(table_result: TableDetectionResult) -> BondAnchor:
     Returns:
         BondAnchor with validated ISINs and bond name.
     """
-    # Search table text first, then full section as fallback
     raw_candidates: list[str] = []
     seen: set[str] = set()
 
-    for text in (table_result.table_text, table_result.full_section_text):
+    texts_to_search = [table_result.table_text, table_result.full_section_text]
+    if table_result.full_doc_fallback_text:
+        texts_to_search.append(table_result.full_doc_fallback_text)
+
+    for text in texts_to_search:
         for match in _ISIN_RE.finditer(text):
             candidate = match.group(1)
             if candidate not in seen:

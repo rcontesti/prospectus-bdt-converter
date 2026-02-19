@@ -22,6 +22,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from pipeline.stage2_parse import ParsedDocument
 from pipeline.stage3_find import BondSection
 
 # ---------------------------------------------------------------------------
@@ -62,6 +63,7 @@ _TABLE_KEYWORDS: list[str] = [
 # Proportion of the section to scan for the table (first N% of characters)
 _SCAN_FRACTION = 0.15
 
+
 # A "table region" is a contiguous block of lines where at least this fraction
 # of lines contain BDT keywords.
 _TABLE_LINE_DENSITY = 0.30
@@ -89,6 +91,10 @@ class TableDetectionResult:
     table_found: bool  # False if we fell back to full section text
     table_char_count: int
     section_char_count: int
+    # First N pages of the whole document — used by Stage 5a as a last-resort
+    # ISIN search when no ISINs appear in the bond section itself (common for
+    # EM prospectuses where ISINs are on the cover or in a front-matter table).
+    full_doc_fallback_text: str | None = None
 
 
 # A "table line" must: (a) have a BDT keyword AND (b) look like a label:value
@@ -176,12 +182,23 @@ def _find_table_region(lines: list[str]) -> tuple[int, int] | None:
 # ---------------------------------------------------------------------------
 
 
-def detect_summary_table(section: BondSection) -> TableDetectionResult:
+def detect_summary_table(
+    section: BondSection,
+    parsed_doc: ParsedDocument | None = None,
+) -> TableDetectionResult:
     """
     Locate the compact key-terms block within a bond section.
 
     Scans the first _SCAN_FRACTION of the section text.  Returns a
     TableDetectionResult with the table text (or full text as fallback).
+
+    Args:
+        section: Bond section from Stage 3.
+        parsed_doc: Optionally, the full ParsedDocument.  When provided, the
+            text of the first _FALLBACK_PAGES pages is stored in the result so
+            that Stage 5a can search the whole document for ISINs as a last
+            resort (needed when ISINs appear on the cover or in front-matter
+            rather than inside the bond section body).
     """
     full_text = section.text
     section_len = len(full_text)
@@ -193,6 +210,13 @@ def detect_summary_table(section: BondSection) -> TableDetectionResult:
     lines = scan_text.splitlines()
 
     region = _find_table_region(lines)
+
+    # Build the whole-document fallback text if a parsed document was supplied.
+    # ISINs can appear anywhere in a prospectus (cover, front-matter, appendix),
+    # so we scan the full document.  The search is pure regex — no LLM cost.
+    full_doc_fallback: str | None = None
+    if parsed_doc is not None:
+        full_doc_fallback = parsed_doc.full_text
 
     if region is not None:
         start_idx, end_idx = region
@@ -209,6 +233,7 @@ def detect_summary_table(section: BondSection) -> TableDetectionResult:
             table_found=True,
             table_char_count=len(table_text),
             section_char_count=section_len,
+            full_doc_fallback_text=full_doc_fallback,
         )
 
     # Fallback: use the first _SCAN_FRACTION of the section
@@ -220,4 +245,5 @@ def detect_summary_table(section: BondSection) -> TableDetectionResult:
         table_found=False,
         table_char_count=len(scan_text),
         section_char_count=section_len,
+        full_doc_fallback_text=full_doc_fallback,
     )
