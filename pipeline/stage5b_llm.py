@@ -149,7 +149,9 @@ def extract_fields(
         RawExtractionResult with one GroupExtractionResult per group.
     """
     if backend is None:
-        backend = OllamaBackend()
+        from pipeline.settings import default_ollama_backend
+
+        backend = default_ollama_backend()
 
     result = RawExtractionResult(anchor=anchor)
     system_prompt = _build_system_prompt(anchor)

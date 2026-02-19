@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import logging
 
-from pipeline.llm_backend import LLMBackend, OllamaBackend
+from pipeline.llm_backend import LLMBackend
 from pipeline.stage4_table import TableDetectionResult
 from pipeline.stage5a_anchor import BondAnchor, extract_anchor
 from pipeline.stage5b_llm import RawExtractionResult, extract_fields
@@ -58,7 +58,7 @@ def extract_bond(
             manufacturer_target_market=["NOT_APPLICABLE"],
         )
 
-    # 5b — Grouped LLM Extraction
+    # 5b — Grouped LLM Extraction (backend defaults to settings.default_ollama_backend())
     raw = extract_fields(table_result, anchor, backend)
     logger.info(
         "LLM extraction: %d groups extracted, %d errors",

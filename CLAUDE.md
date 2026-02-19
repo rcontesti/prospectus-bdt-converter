@@ -173,7 +173,8 @@ Stage 5b calls `backend.complete(system_prompt, user_prompt) → dict`. The `LLM
 **Current implementation: `OllamaBackend`**
 - Calls Ollama `/api/generate` with `"format": "json"` (token-level JSON enforcement)
 - Configurable via dataclass fields: `base_url`, `model`, `timeout`, `temperature`, `num_ctx`
-- Default: `OllamaBackend()` → `http://localhost:11434`, model `qwen2.5:7b`
+- Default constructed via `settings.default_ollama_backend()` which reads `OLLAMA_*` env vars
+- Connection parameters live in `.env` (git-ignored); see `.env.example` and `docs/llm_setup.md`
 
 **Adding a new provider:** implement `complete(system_prompt, user_prompt) -> dict` — that is all Stage 5b requires.
 
@@ -232,6 +233,9 @@ MVP queue: file-based (watched directory). Future: Redis.
 - `data/output/` — output XMLs and ZIPs (git-ignored)
 - `data/output/debug/` — intermediate stage outputs written by `tests/test_stage_outputs.py` (git-ignored)
 - `pipeline/llm_backend.py` — `LLMBackend` protocol + `OllamaBackend` implementation
+- `pipeline/settings.py` — reads `OLLAMA_*` env vars (from `.env`), exposes `default_ollama_backend()`
+- `.env.example` — committed template; copy to `.env` and set `OLLAMA_MODEL`
+- `docs/llm_setup.md` — Ollama installation and configuration guide
 - `data/jobs/` — file-based job queue (git-ignored, Phase 2 only)
 - `docker-compose.yml` — stub, ready for API/worker/LLM services
 - `.github/workflows/test.yml` — CI stub, tests added per service

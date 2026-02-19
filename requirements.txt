@@ -3,9 +3,10 @@ pymupdf>=1.24.0          # Stage 2: PDF text extraction
 rapidfuzz>=3.0.0         # Stage 3: fuzzy heading matching
 lxml>=5.0.0              # Stage 6: XML generation + XSD validation
 
-# Stage 5c post-processor
+# Stage 5b LLM backend + post-processor
+python-dotenv>=1.0.0     # load .env for Ollama connection parameters
 python-dateutil>=2.9.0   # date string parsing → ISO 8601
-httpx>=0.27.0            # GLEIF API calls
+httpx>=0.27.0            # Ollama API calls + GLEIF API calls
 
 # Testing
 pytest>=8.0.0
