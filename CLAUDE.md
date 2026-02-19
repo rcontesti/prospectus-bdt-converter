@@ -49,7 +49,7 @@ Build and validate Stages 2–6 as a CLI tool before adding any API scaffolding.
 ```
 Returned ISINs are embedded in all subsequent prompts: *"Extract the following fields for the bond with ISIN XS2385150334. Ignore all other bonds or ISINs mentioned in the text."* This resolves the many-ISIN ambiguity.
 
-**5b — Grouped LLM extraction** (one prompt per group, JSON mode enforced):
+**5b — Grouped LLM extraction** (one prompt per group, JSON output enforced via backend):
 - Identifiers: ISIN, CUSIP, Common Code, SEDOL
 - Amounts: AggregateNominalAmount, SpecifiedDenomination, IntegralMultiples, SpecifiedCurrency
 - Dates: PricingDate, IssueDate, SettlementDate, MaturityDate, InterestCommencementDate
@@ -164,6 +164,24 @@ ACTUS is noted for future algorithmic schedule derivation/validation.
 
 **Multi-bond prospectus:** Stage 3 returns N section tuples → Stage 5 runs N times → Stage 6 produces N XMLs → Phase 2 API result is a ZIP.
 
+## LLM Backend Architecture
+
+**File:** `pipeline/llm_backend.py`
+
+Stage 5b calls `backend.complete(system_prompt, user_prompt) → dict`. The `LLMBackend` protocol is the only interface Stage 5b depends on — no provider details leak into extraction logic.
+
+**Current implementation: `OllamaBackend`**
+- Calls Ollama `/api/generate` with `"format": "json"` (token-level JSON enforcement)
+- Configurable via dataclass fields: `base_url`, `model`, `timeout`, `temperature`, `num_ctx`
+- Default: `OllamaBackend()` → `http://localhost:11434`, model `qwen2.5:7b`
+
+**Adding a new provider:** implement `complete(system_prompt, user_prompt) -> dict` — that is all Stage 5b requires.
+
+**Design decisions recorded:**
+- JSON mode differs per provider (Ollama `format:json`, OpenAI `response_format`, Anthropic: no native mode — use tool use). This is a real friction point when adding Anthropic.
+- OpenAI-compatible format (Ollama `/v1`, OpenRouter, Groq, Together) makes one shared `OpenAICompatibleBackend` practical for most non-Anthropic providers — defer until needed.
+- Do not implement backends for providers not yet in use. Define the interface now; add implementations on demand.
+
 ## Test Fixtures
 
 Fixtures live in `data/PDF/` (git-ignored). Full details and feature coverage map in README.MD.
@@ -212,6 +230,8 @@ MVP queue: file-based (watched directory). Future: Redis.
 - `.docs/amortization_standard.MD` — email to ICMA explaining FpML + ACTUS approach
 - `data/PDF/` — PDF test fixtures (git-ignored)
 - `data/output/` — output XMLs and ZIPs (git-ignored)
+- `data/output/debug/` — intermediate stage outputs written by `tests/test_stage_outputs.py` (git-ignored)
+- `pipeline/llm_backend.py` — `LLMBackend` protocol + `OllamaBackend` implementation
 - `data/jobs/` — file-based job queue (git-ignored, Phase 2 only)
 - `docker-compose.yml` — stub, ready for API/worker/LLM services
 - `.github/workflows/test.yml` — CI stub, tests added per service

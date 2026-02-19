@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import pytest
 
+from pipeline.llm_backend import OllamaBackend
 from pipeline.stage5a_anchor import BondAnchor
 from pipeline.stage5b_llm import (
-    LLMConfig,
     _build_group_prompt,
     _build_system_prompt,
     _should_extract_amortization,
@@ -115,7 +115,7 @@ class TestOllamaIntegration:
         from pipeline.stage5b_llm import extract_fields
 
         anchor = extract_anchor(geopark_table)
-        config = LLMConfig()  # default localhost:11434
-        result = extract_fields(geopark_table, anchor, config)
+        backend = OllamaBackend()  # default localhost:11434
+        result = extract_fields(geopark_table, anchor, backend)
         assert "identifiers" in result.groups
         assert len(result.groups["identifiers"].fields) > 0

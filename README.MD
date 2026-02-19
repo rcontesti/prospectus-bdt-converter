@@ -122,7 +122,9 @@ Fields are extracted in thematic groups. Each group is a focused prompt with:
 - The anchor ISIN(s)
 - The summary table text (or full section as fallback)
 - A strict JSON output schema with the allowed enum values listed inline, so the LLM maps text → enum in context
-- JSON mode enforced (Ollama `format: json`)
+- JSON output enforced via the backend (Ollama `format: json`, OpenAI `response_format`, etc.)
+
+**LLM backend abstraction (`pipeline/llm_backend.py`):** Stage 5b calls a single `complete(system_prompt, user_prompt) → dict` method defined by the `LLMBackend` protocol. The only current implementation is `OllamaBackend`, which targets Ollama's `/api/generate` endpoint. Adding a new provider means implementing the protocol — no changes to Stage 5b itself. In practice, most providers (OpenRouter, Groq, Together, local Ollama) share the OpenAI `/v1/chat/completions` format, so a single OpenAI-compatible backend would cover them all. Anthropic Claude is the main exception, requiring its own SDK.
 
 | Group | Fields | Notes |
 |-------|--------|-------|
@@ -151,7 +153,7 @@ After LLM extraction, a deterministic layer normalizes and validates — no inte
 | `ManufacturerTargetMarket` | Rule: if SellingRestrictions contains `144A` or `REGS_CAT2` but no EU/UK MiFID entry → `NOT_APPLICABLE`. Otherwise determine from context. |
 | Any required field = null | Mark bond as `done_partial` (see Stage 6) |
 
-**LLM:** Model-agnostic — Ollama with JSON mode enforced. Minimum 32K context window. Target models: Qwen2.5-7B, Phi-3.5-mini, Mistral 7B.
+**LLM:** Provider-agnostic via `LLMBackend` protocol. Current implementation: `OllamaBackend` (localhost:11434, JSON mode enforced). Minimum 32K context window. Target models: Qwen2.5-7B, Phi-3.5-mini, Mistral 7B.
 
 ### Stage 6 — XML Assembly + Validation
 
@@ -454,7 +456,7 @@ Input PDFs and output XMLs are persisted to a shared Docker volume.
 | PDF parsing | `pymupdf` (fast, reliable on text PDFs) | + `docling` (layout-aware, OCR) |
 | Heading detection | Fuzzy string match (rapidfuzz) | LLM classifier fallback |
 | Summary table detection | Heuristic scan (line structure + keywords) | — |
-| Field extraction | Small LLM via Ollama — JSON mode | HuggingFace TGI (swappable) |
+| Field extraction | Small LLM via `LLMBackend` protocol — `OllamaBackend` default | Any backend implementing the protocol (OpenAI-compatible, Anthropic, etc.) |
 | LLM model | Qwen2.5-7B or Phi-3.5-mini (32K+ context) | smollm3, Mistral 7B |
 | Post-processing | `dateutil`, ISIN checksum, GLEIF API, rule-based | — |
 | XML generation | Python `lxml` | — |

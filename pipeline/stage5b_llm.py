@@ -1,30 +1,29 @@
 """
 Stage 5b — Grouped LLM Extraction
 
-Sends one prompt per field group to Ollama, with JSON mode enforced.
-Each prompt includes the ISIN anchor and the enum values inline, so the
-LLM maps prospectus text → BDT field values directly.
+Sends one prompt per field group to the LLM backend, with JSON output expected.
+Each prompt includes the ISIN anchor and the enum values inline, so the LLM maps
+prospectus text → BDT field values directly.
 
-The Ollama HTTP API is called via httpx.  Each group is independent —
-one failure does not block others.
+The backend is injected via the LLMBackend protocol — any provider can be used
+without changing this module.  Each group is extracted independently; one failure
+does not block others.
 """
 
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import dataclass, field
 
-import httpx
-
 from bdt.enums import AMORTIZATION_FIELDS, FIELD_GROUPS
+from pipeline.llm_backend import LLMBackend, OllamaBackend
 from pipeline.stage4_table import TableDetectionResult
 from pipeline.stage5a_anchor import BondAnchor
 
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Config
+# Constants
 # ---------------------------------------------------------------------------
 
 _AMORTIZATION_KEYWORDS = [
@@ -34,17 +33,6 @@ _AMORTIZATION_KEYWORDS = [
     "principal repayment",
     "scheduled redemption",
 ]
-
-
-@dataclass
-class LLMConfig:
-    """Configuration for Ollama API calls."""
-
-    base_url: str = "http://localhost:11434"
-    model: str = "qwen2.5:7b"
-    timeout: float = 120.0
-    temperature: float = 0.0
-    num_ctx: int = 8192
 
 
 # ---------------------------------------------------------------------------
@@ -122,57 +110,6 @@ def _build_group_prompt(
 
 
 # ---------------------------------------------------------------------------
-# Ollama HTTP client
-# ---------------------------------------------------------------------------
-
-
-def _call_ollama(config: LLMConfig, system_prompt: str, user_prompt: str) -> dict:
-    """
-    Call Ollama's /api/generate endpoint with JSON mode.
-
-    Returns parsed JSON dict.
-
-    Raises:
-        RuntimeError: on HTTP error or JSON parsing failure.
-    """
-    payload = {
-        "model": config.model,
-        "prompt": user_prompt,
-        "system": system_prompt,
-        "format": "json",
-        "stream": False,
-        "options": {
-            "temperature": config.temperature,
-            "num_ctx": config.num_ctx,
-        },
-    }
-
-    url = f"{config.base_url}/api/generate"
-
-    try:
-        response = httpx.post(url, json=payload, timeout=config.timeout)
-        response.raise_for_status()
-    except httpx.HTTPStatusError as exc:
-        raise RuntimeError(
-            f"Ollama HTTP {exc.response.status_code}: {exc.response.text}"
-        ) from exc
-    except httpx.ConnectError as exc:
-        raise RuntimeError(
-            f"Cannot connect to Ollama at {config.base_url}. Is it running?"
-        ) from exc
-
-    data = response.json()
-    raw_text = data.get("response", "")
-
-    try:
-        return json.loads(raw_text)
-    except json.JSONDecodeError as exc:
-        raise RuntimeError(
-            f"Ollama returned invalid JSON: {raw_text[:500]}"
-        ) from exc
-
-
-# ---------------------------------------------------------------------------
 # Main extraction function
 # ---------------------------------------------------------------------------
 
@@ -195,10 +132,10 @@ def _should_extract_amortization(
 def extract_fields(
     table_result: TableDetectionResult,
     anchor: BondAnchor,
-    config: LLMConfig | None = None,
+    backend: LLMBackend | None = None,
 ) -> RawExtractionResult:
     """
-    Extract all BDT field groups for one bond via Ollama.
+    Extract all BDT field groups for one bond via the LLM backend.
 
     Each group is extracted independently.  Failures are recorded in
     the errors list but do not abort remaining groups.
@@ -206,13 +143,13 @@ def extract_fields(
     Args:
         table_result: Output from Stage 4.
         anchor: Output from Stage 5a.
-        config: Ollama configuration (uses defaults if None).
+        backend: LLM backend to use. Defaults to OllamaBackend() if None.
 
     Returns:
         RawExtractionResult with one GroupExtractionResult per group.
     """
-    if config is None:
-        config = LLMConfig()
+    if backend is None:
+        backend = OllamaBackend()
 
     result = RawExtractionResult(anchor=anchor)
     system_prompt = _build_system_prompt(anchor)
@@ -222,11 +159,11 @@ def extract_fields(
     for group_name, group_def in FIELD_GROUPS.items():
         try:
             user_prompt = _build_group_prompt(group_name, group_def, text, anchor)
-            fields = _call_ollama(config, system_prompt, user_prompt)
+            fields = backend.complete(system_prompt, user_prompt)
             result.groups[group_name] = GroupExtractionResult(
                 group_name=group_name,
                 fields=fields,
-                model=config.model,
+                model=getattr(backend, "model", "unknown"),
             )
         except RuntimeError as exc:
             logger.warning("Group '%s' extraction failed: %s", group_name, exc)
@@ -243,11 +180,11 @@ def extract_fields(
             user_prompt = _build_group_prompt(
                 "amortization", AMORTIZATION_FIELDS, text, anchor
             )
-            fields = _call_ollama(config, system_prompt, user_prompt)
+            fields = backend.complete(system_prompt, user_prompt)
             result.groups["amortization"] = GroupExtractionResult(
                 group_name="amortization",
                 fields=fields,
-                model=config.model,
+                model=getattr(backend, "model", "unknown"),
             )
         except RuntimeError as exc:
             logger.warning("Amortization extraction failed: %s", exc)
